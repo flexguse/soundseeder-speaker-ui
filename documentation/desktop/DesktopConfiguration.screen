@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model:Screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:model="http://wireframesketcher.com/1.0/model.ecore">
+  <widgets xsi:type="model:Browser" id="1" x="8" y="8" width="881" height="544" text="soundseeder Speaker&#xA;http://localhost:8080" measuredWidth="881" measuredHeight="544">
+    <font/>
+  </widgets>
+  <widgets xsi:type="model:Panel" id="2" x="232" y="70" width="457" height="463" measuredWidth="457" measuredHeight="463"/>
+  <widgets xsi:type="model:Button" id="3" x="400" y="470" text="Play" measuredWidth="116" measuredHeight="53" icon="filled-arrow-right (xlarge)" link="DesktopPlaying.screen">
+    <font size="24px"/>
+  </widgets>
+  <widgets xsi:type="model:List" id="4" x="440" y="183" text="(o) stereo&#xA;( ) mono&#xA;( ) left&#xA;( ) right" measuredWidth="62" measuredHeight="92" border="false" alpha="0">
+    <font/>
+    <items x="0" y="2" width="62" height="22" text="(o) stereo"/>
+    <items x="0" y="24" width="62" height="22" text="( ) mono"/>
+    <items x="0" y="46" width="62" height="22" text="( ) left"/>
+    <items x="0" y="68" width="62" height="22" text="( ) right"/>
+  </widgets>
+  <widgets xsi:type="model:Label" id="5" x="304" y="183" text="Speaker Channel" measuredWidth="94" measuredHeight="23">
+    <font/>
+  </widgets>
+  <widgets xsi:type="model:Combo" id="6" x="440" y="287" width="185" text="eth0 (192.168.1.1)&#xD;&#xA;localhost (127.0.0.1)" measuredWidth="185" measuredHeight="44">
+    <font/>
+  </widgets>
+  <widgets xsi:type="model:Label" id="7" x="304" y="287" text="Network interface" measuredWidth="100" measuredHeight="23">
+    <font/>
+  </widgets>
+  <widgets xsi:type="model:Label" id="8" x="304" y="147" text="Speaker Name" measuredWidth="82" measuredHeight="23">
+    <font/>
+  </widgets>
+  <widgets xsi:type="model:TextField" id="9" x="440" y="147" width="185" text="Room 1" measuredWidth="185" measuredHeight="23">
+    <font/>
+  </widgets>
+  <widgets xsi:type="model:Combo" id="10" x="440" y="339" width="185" text="Hifi Berry&#xD;&#xA;HDMI" measuredWidth="185" measuredHeight="44">
+    <font/>
+  </widgets>
+  <widgets xsi:type="model:Label" id="11" x="304" y="339" text="Soundcard" measuredWidth="63" measuredHeight="23">
+    <font/>
+  </widgets>
+  <widgets xsi:type="model:HSlider" id="12" x="440" y="411" width="185" measuredWidth="185" measuredHeight="17" value="75"/>
+  <widgets xsi:type="model:Label" id="13" x="304" y="408" text="Volume" measuredWidth="46" measuredHeight="23">
+    <font/>
+  </widgets>
+  <widgets xsi:type="model:Label" id="14" x="440" y="430" text="0" measuredWidth="12" measuredHeight="23">
+    <font/>
+  </widgets>
+  <widgets xsi:type="model:Label" id="15" x="613" y="430" text="15" measuredWidth="18" measuredHeight="23">
+    <font/>
+  </widgets>
+  <widgets xsi:type="model:Image" id="16" x="256" y="80" width="260" height="40" measuredWidth="260" measuredHeight="40" src="../images/SoundSeederLogo700.png"/>
+  <widgets xsi:type="model:Label" id="17" x="535" y="80" text="Speaker" measuredWidth="96" measuredHeight="40">
+    <font size="24px" bold="true"/>
+  </widgets>
+  <hRuler/>
+  <vRuler/>
+  <font size="12px"/>
+</model:Screen>

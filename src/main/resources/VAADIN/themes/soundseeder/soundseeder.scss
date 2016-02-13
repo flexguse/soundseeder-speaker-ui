@@ -1,0 +1,11 @@
+@import "../valo/valo.scss";
+
+@mixin soundseeder {
+  @include valo;
+
+  .logo{
+  	margin-bottom: 20px;
+  	margin-left: 100px;
+  	width: 500px;
+  }
+}
