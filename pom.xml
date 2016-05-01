@@ -4,7 +4,6 @@
 
 	<groupId>de.flexguse.soundseeder</groupId>
 	<artifactId>soundseeder-speaker-ui</artifactId>
-
 	<version>0.0.1</version>
 	<packaging>jar</packaging>
 
