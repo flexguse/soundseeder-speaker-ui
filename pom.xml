@@ -4,6 +4,7 @@
 
 	<groupId>de.flexguse.soundseeder</groupId>
 	<artifactId>soundseeder-speaker-ui</artifactId>
+	
 	<version>0.0.1</version>
 	<packaging>jar</packaging>
 
@@ -139,6 +140,23 @@
 					<executable>true</executable>
 				</configuration>
 
+			</plugin>
+
+			<!-- this plugin is needed to prevent build fails if javadoc is not complete -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<additionalparam>-Xdoclint:none</additionalparam>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 
 			<plugin>
