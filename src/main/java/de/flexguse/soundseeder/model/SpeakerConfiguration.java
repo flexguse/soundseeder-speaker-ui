@@ -78,4 +78,21 @@ public class SpeakerConfiguration {
 	 */
 	private Boolean autoplay;
 
+	/**
+	 * This helper method fills the current instance of
+	 * {@link SpeakerConfiguration} with values from another
+	 * {@link SpeakerConfiguration}. Useful if i.e. a central spring managed
+	 * instance of {@link SpeakerConfiguration} needs to be updated.
+	 * 
+	 * @param other
+	 */
+	public void fill(SpeakerConfiguration other) {
+		setAutoplay(other.getAutoplay());
+		setMixerIndex(other.getMixerIndex());
+		setNetworkInterfaceIndex(other.getNetworkInterfaceIndex());
+		setSpeakerChannel(other.getSpeakerChannel());
+		setSpeakerName(other.getSpeakerName());
+		setVolume(other.getVolume());
+	}
+
 }

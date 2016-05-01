@@ -16,7 +16,6 @@ import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.Slider;
 import com.vaadin.ui.TextField;
 
 import de.flexguse.soundseeder.model.SpeakerConfiguration;
@@ -40,7 +39,7 @@ public class ConfigurationForm extends FormLayout implements InitializingBean {
 
 	@Autowired
 	private AudioChannelSelection audioChannelSelection;
-
+	
 	private FieldGroup fieldGroup;
 
 	@Autowired
@@ -102,15 +101,6 @@ public class ConfigurationForm extends FormLayout implements InitializingBean {
 		audioInterfaceSelection.addValidator(createValidator(SpeakerConfiguration.ATTR_MIXER));
 		fieldGroup.bind(audioInterfaceSelection, SpeakerConfiguration.ATTR_MIXER);
 		addComponent(audioInterfaceSelection);
-
-		// add the volume slider
-		Slider volume = new Slider(0, 15);
-		volume.setWidth(100, Unit.PERCENTAGE);
-		volume.setCaption(i18n.get("label.volume"));
-		volume.setResolution(0);
-		volume.addValidator(createValidator(SpeakerConfiguration.ATTR_VOLUME));
-		fieldGroup.bind(volume, SpeakerConfiguration.ATTR_VOLUME);
-		addComponent(volume);
 
 		// add the autoplay switch
 		CheckBox autoplay = new CheckBox(i18n.get("label.autoplay"));

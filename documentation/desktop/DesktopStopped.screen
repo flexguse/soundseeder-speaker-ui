@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model:Screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:model="http://wireframesketcher.com/1.0/model.ecore">
+  <widgets xsi:type="model:Browser" id="1" x="8" y="8" width="881" height="544" text="soundseeder Speaker&#xA;http://localhost:8080" measuredWidth="881" measuredHeight="544">
+    <font/>
+  </widgets>
+  <widgets xsi:type="model:Panel" id="2" x="232" y="70" width="457" height="463" measuredWidth="457" measuredHeight="463"/>
+  <widgets xsi:type="model:Button" id="3" x="416" y="432" text="Play" measuredWidth="116" measuredHeight="53" icon="stop-media (xlarge)" link="DesktopPlaying.screen">
+    <font size="24px"/>
+  </widgets>
+  <widgets xsi:type="model:Image" id="16" x="256" y="80" width="260" height="40" measuredWidth="260" measuredHeight="40" src="../images/SoundSeederLogo700.png"/>
+  <widgets xsi:type="model:Button" id="18" x="576" y="85" text="settings" measuredWidth="90" measuredHeight="29" icon="options (medium)" link="DesktopConfiguration.screen">
+    <font/>
+  </widgets>
+  <widgets xsi:type="model:Label" id="13" x="568" y="382" text="Volume" measuredWidth="46" measuredHeight="23">
+    <font/>
+  </widgets>
+  <widgets xsi:type="model:Label" id="14" x="581" y="352" text="0" measuredWidth="12" measuredHeight="23">
+    <font/>
+  </widgets>
+  <widgets xsi:type="model:Label" id="15" x="576" y="176" text="15" measuredWidth="18" measuredHeight="23">
+    <font/>
+  </widgets>
+  <widgets xsi:type="model:VSlider" id="21" x="576" y="206" height="148" measuredWidth="17" measuredHeight="148"/>
+  <widgets xsi:type="model:Label" id="24" x="344" y="206" width="164" text="Stopped" measuredWidth="164" measuredHeight="154" textAlignment="Center" icon="stop (xxl)" iconPosition="top">
+    <font/>
+  </widgets>
+  <hRuler/>
+  <vRuler/>
+  <font size="12px"/>
+</model:Screen>

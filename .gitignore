@@ -5,3 +5,5 @@
 /data
 /target
 /.classpath
+/src/main/resources/git.properties
+/src/main/resources/rebel.xml

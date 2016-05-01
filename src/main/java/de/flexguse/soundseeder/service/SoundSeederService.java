@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import de.flexguse.soundseeder.model.SpeakerConfiguration;
+import de.flexguse.soundseeder.ui.events.SongChangeEvent;
 
 /**
  * @author Christoph Guse, info@flexguse.de
@@ -37,5 +38,19 @@ public interface SoundSeederService {
 	 *         else false
 	 */
 	public Boolean isListening();
+
+	/**
+	 * updates the playback volume
+	 * 
+	 * @param volume
+	 */
+	public void updateVolume(int volume);
+
+	/**
+	 * Gets the latest song which was played.
+	 * 
+	 * @return may return null
+	 */
+	public SongChangeEvent getLastSong();
 
 }

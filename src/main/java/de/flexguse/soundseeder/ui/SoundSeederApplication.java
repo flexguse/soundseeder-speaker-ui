@@ -3,40 +3,49 @@
  */
 package de.flexguse.soundseeder.ui;
 
+import java.awt.Label;
+
 import javax.validation.ConstraintViolationException;
 
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.vaadin.spring.events.EventBus.ApplicationEventBus;
+import org.vaadin.spring.events.EventBus.SessionEventBus;
+import org.vaadin.spring.events.EventScope;
+import org.vaadin.spring.events.annotation.EventBusListenerMethod;
 import org.vaadin.spring.i18n.I18N;
 
 import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.event.ShortcutAction.KeyCode;
+import com.vaadin.annotations.Title;
+import com.vaadin.navigator.Navigator;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.spring.annotation.SpringUI;
+import com.vaadin.spring.navigator.SpringViewProvider;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
-import com.vaadin.ui.Layout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.ValoTheme;
 
-import de.flexguse.soundseeder.model.SpeakerChannel;
 import de.flexguse.soundseeder.model.SpeakerConfiguration;
 import de.flexguse.soundseeder.service.ConfigurationService;
 import de.flexguse.soundseeder.service.ConfigurationServiceException;
 import de.flexguse.soundseeder.service.SoundSeederService;
-import de.flexguse.soundseeder.ui.component.ConfigurationForm;
-import de.flexguse.soundseeder.ui.push.PlayEvent;
-import de.flexguse.soundseeder.ui.push.PlayEventBroadcaster;
+import de.flexguse.soundseeder.ui.events.SaveSpeakerConfigurationEvent;
+import de.flexguse.soundseeder.ui.events.ShowConfigurationViewEvent;
+import de.flexguse.soundseeder.ui.events.ShowPlayingViewEvent;
+import de.flexguse.soundseeder.ui.events.ShowStoppedViewEvent;
+import de.flexguse.soundseeder.ui.events.VolumeChangedEvent;
+import de.flexguse.soundseeder.ui.views.ConfigurationView;
+import de.flexguse.soundseeder.ui.views.PlayingView;
+import de.flexguse.soundseeder.ui.views.StoppedView;
 
 /**
  * @author Christoph Guse, info@flexguse.de
@@ -44,231 +53,211 @@ import de.flexguse.soundseeder.ui.push.PlayEventBroadcaster;
  */
 @Theme("soundseeder")
 @SpringUI(path = "")
+@Title("soundseeder Speaker")
 @Push
-public class SoundSeederApplication extends UI implements InitializingBean {
+public class SoundSeederApplication extends UI implements DisposableBean {
 
 	private static final long serialVersionUID = -394340152951891751L;
 
 	@Autowired
-	private ConfigurationForm configurationForm;
+	private SpringViewProvider viewProvider;
+
+	@Autowired
+	private ApplicationEventBus applicationEventBus;
+	
+	@Autowired
+	private SessionEventBus sessionEventBus;
+
+	@Autowired
+	private ConfigurationService speakerConfigurationService;
 
 	@Autowired
 	private SoundSeederService soundSeederService;
-
-	/**
-	 * The service which persists/loads the speaker configuration.
-	 */
+	
 	@Autowired
-	private ConfigurationService configurationService;
-
-	private Button playButton;
-
-	private Button stopButton;
-
 	private SpeakerConfiguration speakerConfiguration;
 
 	@Autowired
 	private I18N i18n;
 
-	/**
-	 * do some initialization work here
-	 */
-	@Override
-	public void afterPropertiesSet() throws Exception {
+	private Navigator navigator;
 
-		/*
-		 * create the play button
-		 */
-		playButton = new Button(i18n.get("label.button.play"));
-		playButton.setIcon(FontAwesome.PLAY_CIRCLE_O);
-		playButton.setClickShortcut(KeyCode.ENTER);
-		playButton.setStyleName(ValoTheme.BUTTON_HUGE);
-		playButton.addClickListener(clickEvent -> handlePlayButtonClick(clickEvent));
-
-		/*
-		 * create the stop button
-		 */
-		stopButton = new Button(i18n.get("label.button.stop"));
-		stopButton.setIcon(FontAwesome.STOP_CIRCLE_O);
-		stopButton.setClickShortcut(KeyCode.ESCAPE);
-		stopButton.setStyleName(ValoTheme.BUTTON_HUGE);
-		stopButton.addClickListener(clickEvent -> handleStopButtonClick(clickEvent));
-
-		/*
-		 * load the speaker configuration
-		 */
-		speakerConfiguration = configurationService.loadConfiguration();
-		if (speakerConfiguration == null) {
-			speakerConfiguration = SpeakerConfiguration.builder().speakerName("soundseeder Speaker")
-					.speakerChannel(SpeakerChannel.STEREO).volume(12.0).build();
-		}
-	}
+	private Button settingsButton;
 
 	@Override
 	protected void init(VaadinRequest request) {
 
-		setContent(createConfigurationForm());
-		PlayEventBroadcaster.register(this::handlePlayingBroadcast);
+		applicationEventBus.subscribe(this);
+		sessionEventBus.subscribe(this);
+
+		// create master layout
+		final VerticalLayout root = new VerticalLayout();
+		root.setSizeFull();
+		root.setMargin(true);
+		root.setSpacing(true);
+
+		// add header row to panel
+		HorizontalLayout headerRow = new HorizontalLayout();
+		headerRow.setWidth(75, Unit.PERCENTAGE);
+
+		Image logo = new Image("", new ThemeResource("img/sspLogo.png"));
+		logo.setHeight(75, Unit.PIXELS);
+		headerRow.addComponent(logo);
+
+		settingsButton = new Button(i18n.get("label.button.settings"));
+		settingsButton.addClickListener(clickEvent -> applicationEventBus.publish(this,
+				ShowConfigurationViewEvent.builder().eventSource(this).build()));
+		settingsButton.setIcon(FontAwesome.EDIT);
+		headerRow.addComponent(settingsButton);
+		headerRow.setComponentAlignment(settingsButton, Alignment.BOTTOM_RIGHT);
+
+		// add footer row containing the software version number
+		HorizontalLayout footerRow = new HorizontalLayout();
+		footerRow.setWidth(75, Unit.PERCENTAGE);
+		
+		Label versionInfo = new Label();
+		//versionInfo.setText(String.format("", args));
+		
+		root.addComponent(headerRow);
+		root.setComponentAlignment(headerRow, Alignment.TOP_CENTER);
+		setContent(root);
+
+		/*
+		 * create 75% panel centered
+		 */
+		final Panel viewPanel = new Panel();
+		viewPanel.setWidth(75, Unit.PERCENTAGE);
+		viewPanel.setHeight(100, Unit.PERCENTAGE);
+		root.addComponent(viewPanel);
+		root.setComponentAlignment(viewPanel, Alignment.TOP_CENTER);
+		root.setExpandRatio(viewPanel, 0.99f);
+
+		navigator = new Navigator(this, viewPanel);
+		navigator.addProvider(viewProvider);
+
+		setStartView();
+	}
+
+	/**
+	 * This helper method navigates to the view which currently is correct.
+	 */
+	private void setStartView() {
+
+		if (soundSeederService.isListening()) {
+			// open playing view
+			handleShowPlayingViewEvent(ShowPlayingViewEvent.builder().eventSource(this).build());
+
+		} else {
+			// open stopped view
+			handleShowStoppedViewEvent(ShowStoppedViewEvent.builder().eventSource(this).build());
+		}
+	}
+
+	/**
+	 * This event handler method switches to the {@link PlayingView}.
+	 * 
+	 * @param event
+	 */
+	@EventBusListenerMethod(scope = EventScope.APPLICATION)
+	public void handleShowPlayingViewEvent(ShowPlayingViewEvent event) {
+
+		try {
+			soundSeederService.listen(speakerConfigurationService.loadConfiguration());
+
+			getUI().access(() -> {
+				// switch to playing view
+				navigator.navigateTo(PlayingView.VIEW_NAME);
+				// disable settings button
+				settingsButton.setVisible(false);
+			});
+
+		} catch (ConfigurationServiceException e) {
+			Notification.show(e.getMessage(), Type.ERROR_MESSAGE);
+		}
+
+	}
+
+	/**
+	 * This event handler method switches to the {@link StoppedView}.
+	 * 
+	 * @param event
+	 */
+	@EventBusListenerMethod(scope = EventScope.APPLICATION)
+	public void handleShowStoppedViewEvent(ShowStoppedViewEvent event) {
+
+		soundSeederService.stopListening();
+
+		getUI().access(() -> {
+			// switch to stopped view
+			navigator.navigateTo(StoppedView.VIEW_NAME);
+
+			// enable settings button
+			settingsButton.setVisible(true);
+
+		});
+	}
+
+	/**
+	 * This event handler method switches to the {@link ConfigurationView}.
+	 * 
+	 * @param event
+	 */
+	@EventBusListenerMethod(scope = EventScope.APPLICATION)
+	public void handleShowConfigurationViewEvent(ShowConfigurationViewEvent event) {
+
+		getUI().access(() -> {
+			// switch to configuration view
+			navigator.navigateTo(ConfigurationView.VIEW_NAME);
+
+			// remove settings button
+			settingsButton.setVisible(false);
+		});
+
+	}
+
+	/**
+	 * This event handler method handles the
+	 * {@link SaveSpeakerConfigurationEvent}. The configuration is updated.
+	 * 
+	 * @param event
+	 */
+	@EventBusListenerMethod(scope = EventScope.SESSION)
+	public void handleUpdateSpeakerConfigurationEvent(SaveSpeakerConfigurationEvent event) {
+
+		try {
+			speakerConfigurationService.saveConfiguration(event.getUpdatedSpeakerConfiguration());
+			speakerConfiguration.fill(event.getUpdatedSpeakerConfiguration());
+		} catch (ConstraintViolationException | ConfigurationServiceException e) {
+			Notification.show(e.getMessage(), Type.ERROR_MESSAGE);
+		}
+
+	}
+
+	/**
+	 * This event handler method updates the volume in the configuration and in
+	 * the soundseeder speaker.
+	 * 
+	 * @param event
+	 */
+	@EventBusListenerMethod(scope = EventScope.SESSION)
+	public void handleVolumeChanged(VolumeChangedEvent event) {
+
+		try {
+
+			speakerConfiguration.setVolume(event.getChangedVolume().doubleValue());
+			speakerConfigurationService.saveConfiguration(speakerConfiguration);
+			soundSeederService.updateVolume(event.getChangedVolume());
+
+		} catch (ConstraintViolationException | ConfigurationServiceException e) {
+			Notification.show(e.getMessage(), Type.ERROR_MESSAGE);
+		}
 
 	}
 
 	@Override
-	public void detach() {
-		PlayEventBroadcaster.unregister(this::handlePlayingBroadcast);
-		super.detach();
-	}
-
-	/**
-	 * This helper method creates the configuration form and adds the handlers
-	 * to the buttons.
-	 * 
-	 * @return
-	 */
-	private Layout createConfigurationForm() {
-
-		/*
-		 * the layout containing the logo and all configuration inputs
-		 */
-		VerticalLayout formLayout = new VerticalLayout();
-		formLayout.setWidth(100, Unit.PERCENTAGE);
-		formLayout.setSpacing(true);
-		formLayout.setMargin(new MarginInfo(true, true, true, true));
-
-		/*
-		 * add the logo to the form layout
-		 */
-		ThemeResource logoResource = new ThemeResource("img/sspLogo.png");
-		Image logo = new Image("", logoResource);
-		logo.setStyleName("logo");
-		formLayout.addComponent(logo);
-		formLayout.setExpandRatio(logo, 0.1f);
-
-		/*
-		 * add the configuration form
-		 */
-		configurationForm.setSpeakerConfiguration(speakerConfiguration);
-		configurationForm.setSizeFull();
-		formLayout.addComponent(configurationForm);
-		formLayout.setExpandRatio(configurationForm, 0.5f);
-
-		checkPlayStatus();
-
-		/*
-		 * add the play button
-		 */
-		formLayout.addComponent(playButton);
-		formLayout.setComponentAlignment(playButton, Alignment.MIDDLE_CENTER);
-
-		/*
-		 * add the stop button
-		 */
-		formLayout.addComponent(stopButton);
-		formLayout.setComponentAlignment(stopButton, Alignment.MIDDLE_CENTER);
-
-		/*
-		 * create the layout holding centered panel with 75% of width
-		 */
-		VerticalLayout panelLayout = new VerticalLayout();
-		panelLayout.setSizeFull();
-
-		/*
-		 * create the panel
-		 */
-		Panel panel = new Panel();
-		panel.setWidth(75, Unit.PERCENTAGE);
-		panel.setHeight(75, Unit.PERCENTAGE);
-		panel.setContent(formLayout);
-		
-		panelLayout.addComponent(panel);
-		panelLayout.setComponentAlignment(panel, Alignment.MIDDLE_CENTER);
-
-		return panelLayout;
-
-	}
-
-	/**
-	 * This helper method handles the click on the play button. The
-	 * soundseederspeaker is started listening for music.
-	 * 
-	 * @param clickEvent
-	 */
-	private void handlePlayButtonClick(Button.ClickEvent clickEvent) {
-		try {
-			configurationForm.commit();
-
-			speakerConfiguration = configurationForm.getSpeakerConfiguration();
-			configurationService.saveConfiguration(speakerConfiguration);
-			soundSeederService.listen(speakerConfiguration);
-			PlayEventBroadcaster.broadcast(PlayEvent.builder().isPlaying(true).build());
-		} catch (CommitException | ConstraintViolationException | ConfigurationServiceException e) {
-			Notification.show(e.getMessage(), Type.ERROR_MESSAGE);
-		}
-	}
-
-	/**
-	 * This helper method handles the click on the stop button. The
-	 * soundseederspeaker is stopped listening for music.
-	 * 
-	 * @param clickEvent
-	 */
-	private void handleStopButtonClick(Button.ClickEvent clickEvent) {
-
-		soundSeederService.stopListening();
-		PlayEventBroadcaster.broadcast(PlayEvent.builder().isPlaying(false).build());
-
-	}
-
-	/**
-	 * This helper method checks if the soundseeder speaker ist listening to
-	 * music. If not listening the configuration form is enabled, else it is
-	 * disabled.
-	 */
-	private void checkPlayStatus() {
-
-		if (soundSeederService.isListening()) {
-			setPlayStatus();
-		} else {
-			setConfigureStatus();
-		}
-
-	}
-
-	/**
-	 * This helper method enables the configuration form.
-	 */
-	private void setConfigureStatus() {
-		access(() -> {
-			playButton.setVisible(true);
-			stopButton.setVisible(false);
-			configurationForm.setEnabled(true);
-
-		});
-	}
-
-	/**
-	 * This helper method disabled the configuration form.
-	 */
-	private void setPlayStatus() {
-		access(() -> {
-			configurationForm.setEnabled(false);
-			playButton.setVisible(false);
-			stopButton.setVisible(true);
-		});
-	}
-
-	/**
-	 * This is the listener method of a {@link PlayEvent} broadcasted in the
-	 * {@link PlayEventBroadcaster}.
-	 * 
-	 * @param playEvent
-	 */
-	private void handlePlayingBroadcast(PlayEvent playEvent) {
-
-		if (playEvent.isPlaying()) {
-			setPlayStatus();
-		} else {
-			setConfigureStatus();
-		}
+	public void destroy() throws Exception {
+		sessionEventBus.unsubscribe(this);
+		applicationEventBus.unsubscribe(this);
 
 	}
 
