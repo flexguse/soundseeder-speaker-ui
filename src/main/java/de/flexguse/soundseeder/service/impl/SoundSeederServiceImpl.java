@@ -185,7 +185,7 @@ public class SoundSeederServiceImpl implements SoundSeederService, DisposableBea
 
 		NetworkInterface networkInterface = networkInterfaceService
 				.getNetworkInterfaceByIndex(configuration.getNetworkInterfaceIndex());
-		if (networkInterface != null) {
+		if (networkInterface != null && networkInterface.getInetAddresses() != null && networkInterface.getInetAddresses().hasMoreElements() && networkInterface.getInetAddresses().nextElement() != null) {
 			return networkInterface.getInetAddresses().nextElement().getHostAddress().trim();
 		}
 

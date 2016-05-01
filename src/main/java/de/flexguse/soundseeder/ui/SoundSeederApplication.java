@@ -3,8 +3,6 @@
  */
 package de.flexguse.soundseeder.ui;
 
-import java.awt.Label;
-
 import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.DisposableBean;
@@ -28,12 +26,15 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.ValoTheme;
 
+import de.flexguse.soundseeder.model.GitRepositoryState;
 import de.flexguse.soundseeder.model.SpeakerConfiguration;
 import de.flexguse.soundseeder.service.ConfigurationService;
 import de.flexguse.soundseeder.service.ConfigurationServiceException;
@@ -64,7 +65,7 @@ public class SoundSeederApplication extends UI implements DisposableBean {
 
 	@Autowired
 	private ApplicationEventBus applicationEventBus;
-	
+
 	@Autowired
 	private SessionEventBus sessionEventBus;
 
@@ -73,12 +74,15 @@ public class SoundSeederApplication extends UI implements DisposableBean {
 
 	@Autowired
 	private SoundSeederService soundSeederService;
-	
+
 	@Autowired
 	private SpeakerConfiguration speakerConfiguration;
 
 	@Autowired
 	private I18N i18n;
+
+	@Autowired
+	private GitRepositoryState gitRepositoryState;
 
 	private Navigator navigator;
 
@@ -110,13 +114,6 @@ public class SoundSeederApplication extends UI implements DisposableBean {
 		settingsButton.setIcon(FontAwesome.EDIT);
 		headerRow.addComponent(settingsButton);
 		headerRow.setComponentAlignment(settingsButton, Alignment.BOTTOM_RIGHT);
-
-		// add footer row containing the software version number
-		HorizontalLayout footerRow = new HorizontalLayout();
-		footerRow.setWidth(75, Unit.PERCENTAGE);
-		
-		Label versionInfo = new Label();
-		//versionInfo.setText(String.format("", args));
 		
 		root.addComponent(headerRow);
 		root.setComponentAlignment(headerRow, Alignment.TOP_CENTER);
@@ -132,9 +129,25 @@ public class SoundSeederApplication extends UI implements DisposableBean {
 		root.setComponentAlignment(viewPanel, Alignment.TOP_CENTER);
 		root.setExpandRatio(viewPanel, 0.99f);
 
+		// add footer row containing the software version number
+		HorizontalLayout footerRow = new HorizontalLayout();
+		footerRow.setWidth(75, Unit.PERCENTAGE);
+
+		Label versionInfo = new Label();
+		versionInfo.setWidthUndefined();
+		versionInfo.setValue(String.format("Version %s, Commit time %s, Commit %s", gitRepositoryState.getBuildVersion(),
+				gitRepositoryState.getCommitTime(), gitRepositoryState.getCommitIdDescribeShort()));
+		versionInfo.setStyleName(ValoTheme.LABEL_TINY);
+		footerRow.addComponent(versionInfo);
+		footerRow.setComponentAlignment(versionInfo, Alignment.MIDDLE_RIGHT);
+		root.addComponent(footerRow);
+		root.setComponentAlignment(footerRow, Alignment.TOP_CENTER);
+
+		
 		navigator = new Navigator(this, viewPanel);
 		navigator.addProvider(viewProvider);
 
+		
 		setStartView();
 	}
 

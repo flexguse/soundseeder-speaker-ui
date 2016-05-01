@@ -45,6 +45,8 @@ public class GitRepositoryState {
 
 	private String buildTime;
 
+	private String buildVersion;
+	
 	private String remoteOriginUrl;
 
 	/**
@@ -61,6 +63,7 @@ public class GitRepositoryState {
 			this.buildTime = properties.getProperty("git.build.time");
 			this.buildUserEmail = properties.getProperty("git.build.user.email");
 			this.buildUserName = properties.getProperty("git.build.user.name");
+			this.commitId = properties.getProperty("git.commit.id");
 			this.commitIdAbbrev = properties.getProperty("git.commit.id.abbrev");
 			this.commitIdDescribe = properties.getProperty("git.commit.id.describe");
 			this.commitIdDescribeShort = properties.getProperty("git.commit.id.describe-short");
@@ -71,6 +74,7 @@ public class GitRepositoryState {
 			this.commitUserName = properties.getProperty("git.commit.user.name");
 			this.remoteOriginUrl = properties.getProperty("git.remote.origin.url");
 			this.tags = properties.getProperty("git.tags");
+			this.buildVersion = properties.getProperty("git.build.version");
 
 		}
 

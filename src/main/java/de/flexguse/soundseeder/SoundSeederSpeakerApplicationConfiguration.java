@@ -144,7 +144,7 @@ public class SoundSeederSpeakerApplicationConfiguration implements InitializingB
 	public GitRepositoryState gitRepositoryState() throws IOException {
 
 		Properties gitProperties = new Properties();
-		gitProperties.load(getClass().getResourceAsStream("/git.properties"));
+		gitProperties.load(SoundSeederSpeakerApplicationConfiguration.class.getResourceAsStream("/git.properties"));
 
 		return new GitRepositoryState(gitProperties);
 

@@ -4,7 +4,14 @@
 
 Non-Android devices are always speakers. soundseeder itself provide a Java application without any user interface for this purpose. This application uses the provided JAR and adds a simple user interface.
 
-![soundseeder Speaker UI](documentation/images/ui.png)
+## Plaging view
+![playing view](documentation/images/playing.png)
+
+## Disconnected view
+![disconnected view](documentation/images/disconnected.png)
+
+## Configuration view
+![config view](documentation/images/config.png)
 
 The current implementation is in alpha status. It works, but under the hood there remains some work.
 

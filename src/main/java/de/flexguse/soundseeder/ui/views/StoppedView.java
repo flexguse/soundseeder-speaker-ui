@@ -103,18 +103,18 @@ public class StoppedView extends SpeakerView {
 		Image icon = new Image();
 		icon.setSource(iconResource);
 		icon.setSizeFull();
-		Label stopInfo = new Label();
-		stopInfo.setValue(i18n.get("label.stop"));
-		stopInfo.setStyleName(ValoTheme.LABEL_HUGE);
+		Label disconnectedInfo = new Label();
+		disconnectedInfo.setValue(i18n.get("label.disconnected"));
+		disconnectedInfo.setStyleName(ValoTheme.LABEL_HUGE);
 		
 		stopIconLayout.addComponent(icon);
-		stopIconLayout.addComponent(stopInfo);
+		stopIconLayout.addComponent(disconnectedInfo);
 		stopIconLayout.setExpandRatio(icon, .99f);
 
 		// create play button
-		Button playButton = new Button(i18n.get("label.button.play"));
-		playButton.setIcon(FontAwesome.PLAY);
-		playButton.addClickListener(clickEvent -> handlePlayButtonClick(clickEvent));
+		Button connectButton = new Button(i18n.get("label.button.connect"));
+		connectButton.setIcon(FontAwesome.CHAIN);
+		connectButton.addClickListener(clickEvent -> handlePlayButtonClick(clickEvent));
 
 		volumeSlider.setHeight(100, Unit.PERCENTAGE);
 		volumeSlider.setOrientation(SliderOrientation.VERTICAL);
@@ -135,8 +135,8 @@ public class StoppedView extends SpeakerView {
 		buttonRow.setWidth(100, Unit.PERCENTAGE);
 
 		buttonRow.setHeight(75, Unit.PIXELS);
-		buttonRow.addComponent(playButton);
-		buttonRow.setComponentAlignment(playButton, Alignment.MIDDLE_CENTER);
+		buttonRow.addComponent(connectButton);
+		buttonRow.setComponentAlignment(connectButton, Alignment.MIDDLE_CENTER);
 		addToButtonBar(buttonRow);
 
 	}

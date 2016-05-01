@@ -48,10 +48,10 @@ public class PlayingView extends SpeakerView {
 
 	@Autowired
 	private VolumeSlider volumeSlider;
-	
+
 	@Autowired
 	private SoundSeederService soundSeederService;
-	
+
 	@Autowired
 	private SessionEventBus sessionEventBus;
 
@@ -72,17 +72,17 @@ public class PlayingView extends SpeakerView {
 
 		super.enter(event);
 
-		if(soundSeederService.getLastSong() != null){
+		if (soundSeederService.getLastSong() != null) {
 			sessionEventBus.publish(this, soundSeederService.getLastSong());
 		}
-		
+
 	}
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		super.afterPropertiesSet();
 
-		createStopButton();
+		createDisconnectButton();
 
 		/*
 		 * add cover image and volume slider
@@ -118,9 +118,9 @@ public class PlayingView extends SpeakerView {
 	/**
 	 * This helper method adds the stop button to the view.
 	 */
-	private void createStopButton() {
-		Button stopButton = new Button(i18n.get("label.button.stop"));
-		stopButton.setIcon(FontAwesome.STOP);
+	private void createDisconnectButton() {
+		Button stopButton = new Button(i18n.get("label.button.disconnect"));
+		stopButton.setIcon(FontAwesome.CHAIN_BROKEN);
 		stopButton.setHeight(100, Unit.PERCENTAGE);
 		stopButton.addClickListener(clickEvent -> handleStopButtonClick(clickEvent));
 
