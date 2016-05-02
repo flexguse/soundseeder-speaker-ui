@@ -54,7 +54,10 @@ public class VolumeSlider extends Slider implements InitializingBean, Disposable
 		setIcon(FontAwesome.VOLUME_UP);
 		setImmediate(true);
 		setResolution(0);
-		setValue(speakerConfiguration.getVolume());
+		if(speakerConfiguration != null){
+			setValue(speakerConfiguration.getVolume());
+		}
+		
 
 		/*
 		 * dispatch the volume changed event if the volume was changed
