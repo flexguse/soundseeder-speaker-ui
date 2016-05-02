@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import de.flexguse.soundseeder.model.SpeakerChannel;
 import de.flexguse.soundseeder.model.SpeakerConfiguration;
 import de.flexguse.soundseeder.service.ConfigurationService;
 import de.flexguse.soundseeder.service.ConfigurationServiceException;
@@ -99,7 +100,15 @@ public class JsonConfigurationService implements ConfigurationService {
 		try {
 			return objectMapper.readValue(dataFile.toFile(), SpeakerConfiguration.class);
 		} catch (FileNotFoundException e) {
-			return null;
+
+			// in this case no configuration exists, so a default configuration
+			// is created
+			SpeakerConfiguration defaultConfiguration = SpeakerConfiguration.builder().autoplay(false)
+					.speakerChannel(SpeakerChannel.STEREO).speakerName("soundseeder-speaker").mixerIndex(0)
+					.networkInterfaceIndex(0).volume(13.0).build();
+			saveConfiguration(defaultConfiguration);
+
+			return defaultConfiguration;
 		}
 
 		catch (IOException e) {

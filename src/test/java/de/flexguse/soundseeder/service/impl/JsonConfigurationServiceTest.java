@@ -4,7 +4,6 @@
 package de.flexguse.soundseeder.service.impl;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 import java.net.SocketException;
 import java.util.Arrays;
@@ -42,7 +41,12 @@ public class JsonConfigurationServiceTest {
 
 	@Test
 	public void testLoadNotExistingConfigFile() throws ConfigurationServiceException {
-		assertNull(service.loadConfiguration());
+		
+		SpeakerConfiguration defaultConfiguration = SpeakerConfiguration.builder().autoplay(false)
+				.speakerChannel(SpeakerChannel.STEREO).speakerName("soundseeder-speaker").mixerIndex(0)
+				.networkInterfaceIndex(0).volume(13.0).build();
+		
+		assertEquals(defaultConfiguration, service.loadConfiguration());
 	}
 
 	@Test
