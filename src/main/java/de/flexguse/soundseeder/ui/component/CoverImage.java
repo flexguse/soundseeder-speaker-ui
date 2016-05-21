@@ -48,12 +48,17 @@ public class CoverImage extends Image implements InitializingBean, DisposableBea
 
 		Resource cover = new ExternalResource(String.format("http://%s:5353/0", event.getPlayerIp()));
 		if (cover == null || StringUtils.isEmpty(cover.getMIMEType())) {
-
-			getUI().access(() -> setSource(speakerIcon));
+			if(getUI() != null){
+				getUI().access(() -> setSource(speakerIcon));
+			}
+			
 
 		} else {
 
-			getUI().access(() -> setSource(cover));
+			if(getUI() != null){
+				getUI().access(() -> setSource(cover));
+			}
+			
 		}
 
 	}

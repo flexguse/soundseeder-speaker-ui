@@ -53,7 +53,7 @@ public class MusicTitleInfo extends VerticalLayout implements InitializingBean, 
 	public void afterPropertiesSet() throws Exception {
 		applicationEventBus.subscribe(this);
 		sessionEventBus.subscribe(this);
-		
+
 		setResponsive(true);
 
 		setWidth(100, Unit.PERCENTAGE);
@@ -101,10 +101,13 @@ public class MusicTitleInfo extends VerticalLayout implements InitializingBean, 
 	 * @param event
 	 */
 	private void updateMusicInfo(SongChangeEvent event) {
-		getUI().access(() -> {
-			title.setValue(event.getSongName());
-			artist.setValue(event.getArtistName());
-		});
+		if (getUI() != null) {
+			getUI().access(() -> {
+				title.setValue(event.getSongName());
+				artist.setValue(event.getArtistName());
+			});
+
+		}
 
 	}
 
