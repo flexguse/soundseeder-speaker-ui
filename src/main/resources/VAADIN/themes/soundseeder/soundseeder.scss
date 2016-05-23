@@ -1,21 +1,132 @@
 @import "../valo/valo.scss";
 
+// max width used for the main view, should be equal to the original width of the logo
+$max_width: 700px;
+
 @mixin soundseeder {
+	
   @include valo;
 
-  .logo{
-  	margin-bottom: 20px;
-  	margin-left: 100px;
-  	width: 500px;
-  }
+  /* main areas  ------------------------ */
   
-  .v-label-music_title{
-  	font-size: 1.4em;
-  	font-weight: bold;
+  .main-view {
+	
+	.root {
+		overflow: visible;
+		
+		.header {
+	  		max-width: $max_width;
+		}
+		.logo {
+			width: 100%;
+		}
+		
+		.view-panel {
+			// do not allow the panel get wider than the logo
+			max-width: $max_width;
+			min-height: 245px;
+			
+			.speaker-view {
+			
+				.main-content {
+					min-height: 100px;
+					
+					 .v-image-cover-image {
+					  	width: auto;
+					  	min-height: 60px;
+					  }
+					  
+					  .v-label-music_title {
+						font-size: 1.4em;
+					  	font-weight: bold;
+					  }
+					  .v-label-music_artist {
+					  	font-weight: bold;
+					  }
+					  
+					  .volume-slider {
+					  }
+					  
+					  // ugly workaround to position the slider in a fixed position at the panel's top right corner
+					  .v-slot-volume-slider {
+						position: absolute !important;
+						top: 0;
+						right: 0;
+					  }
+					  
+					  // slider caption bigger font
+					  .v-caption-volume-slider {
+					  	font-size: 24px;
+						padding-left: 8px;
+						padding-bottom: 0px;
+					  }
+					  
+					  .v-slider-volume-slider {
+					  	padding: 0px 0 11px 0;
+					  }
+				}
+				
+				.button-bar {
+				}
+			}
+		}
+		
+		.footer {
+			max-width: $max_width;
+		}
+	}	  
   }
+    
+   /* responsivness ------------------------- */
   
-  .v-label-music_artist{
-  	font-weight: bold;
+  //.main-view .root .view-panel .speaker-view 
+  .main-content {
+  
+  	min-height: 170px;
+  	
+  	// width ranges
+  	
+	&[width-range~="0-320px"] {
+		.v-label-music_title {
+			font-size: 0.6em !important;
+		}
+
+		.v-caption-volume-slider {
+		 	font-size: 18px !important;
+			padding-left: 12px !important;
+		 }
+	}
+	&[width-range~="320-520px"] {
+		.v-label-music_title {
+			font-size: 0.8em !important;
+		}
+	}
+	&[width-range~="580-768px"] {
+		.v-label-music_title {
+			font-size: 1.1em !important;
+			font-weight: bold !important;
+		}
+	}
+	&[width-range~="768px-1024px"] {
+		.v-label-music_title {
+			font-size: 1.4em !important;
+			font-weight: bold !important;
+		}
+	}
+	&[width-range~="1024px-"] {
+	}
+	
+	// height ranges
+	
+	&[height-range~="0-300px"] {
+		.v-caption-volume-slider {
+		 	font-size: 18px;
+			padding-left: 12px;
+		 }
+	}
+	&[height-range~="301-500px"] {
+	}
+	&[height-range~="501-"] {
+	}  
   }
-  
 }

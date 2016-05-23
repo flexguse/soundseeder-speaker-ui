@@ -57,17 +57,16 @@ public class MusicTitleInfo extends VerticalLayout implements InitializingBean, 
 		setResponsive(true);
 
 		setWidth(100, Unit.PERCENTAGE);
-		setHeight(200, Unit.PIXELS);
 		setSpacing(true);
 		setMargin(true);
 
 		title = new Label("no title information");
-		title.setStyleName("music_title");
+		title.addStyleName("music_title");
 		addComponent(title);
 		setComponentAlignment(title, Alignment.MIDDLE_CENTER);
 
 		artist = new Label("no artist information");
-		artist.setStyleName("music_artist");
+		artist.addStyleName("music_artist");
 		addComponent(artist);
 		setComponentAlignment(artist, Alignment.MIDDLE_CENTER);
 
@@ -108,7 +107,6 @@ public class MusicTitleInfo extends VerticalLayout implements InitializingBean, 
 			});
 
 		}
-
 	}
 
 }

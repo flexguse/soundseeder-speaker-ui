@@ -38,8 +38,8 @@ public class SoundSeederServiceImpl implements SoundSeederService, DisposableBea
 	@Autowired
 	private EventBus.ApplicationEventBus applicationEventBus;
 	
-	@Autowired
-	private SpeakerConfiguration speakerConfiguration;
+//	@Autowired
+//	private SpeakerConfiguration speakerConfiguration;
 
 	private SpeakerServiceAdapter speakerServiceAdapter;
 

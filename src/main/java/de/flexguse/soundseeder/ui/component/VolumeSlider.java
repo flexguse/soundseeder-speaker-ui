@@ -13,9 +13,12 @@ import org.vaadin.spring.i18n.I18N;
 
 import com.vaadin.data.Property;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Sizeable.Unit;
+import com.vaadin.shared.ui.slider.SliderOrientation;
 import com.vaadin.spring.annotation.ViewScope;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Slider;
+import com.vaadin.ui.themes.ValoTheme;
 
 import de.flexguse.soundseeder.model.SpeakerConfiguration;
 import de.flexguse.soundseeder.ui.events.VolumeChangedEvent;
@@ -47,8 +50,10 @@ public class VolumeSlider extends Slider implements InitializingBean, Disposable
 
 		applicationEventBus.subscribe(this);
 		
-		setCaption(i18n.get("label.volume"));
+		//setCaption(i18n.get("label.volume"));
+		addStyleName("volume-slider");
 		setHeight(100, Unit.PERCENTAGE);
+                setOrientation(SliderOrientation.VERTICAL);
 		setMin(0);
 		setMax(15);
 		setIcon(FontAwesome.VOLUME_UP);
@@ -57,7 +62,6 @@ public class VolumeSlider extends Slider implements InitializingBean, Disposable
 		if(speakerConfiguration != null){
 			setValue(speakerConfiguration.getVolume());
 		}
-		
 
 		/*
 		 * dispatch the volume changed event if the volume was changed

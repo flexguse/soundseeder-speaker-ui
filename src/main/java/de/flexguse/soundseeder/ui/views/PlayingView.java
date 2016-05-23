@@ -4,18 +4,16 @@
 package de.flexguse.soundseeder.ui.views;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.vaadin.spring.events.EventBus.ApplicationEventBus;
 import org.vaadin.spring.events.EventBus.SessionEventBus;
-import org.vaadin.spring.i18n.I18N;
 
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.shared.ui.slider.SliderOrientation;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.VerticalLayout;
 
 import de.flexguse.soundseeder.service.SoundSeederService;
@@ -32,119 +30,107 @@ import de.flexguse.soundseeder.ui.events.StopPlayingEvent;
 @SpringView(name = PlayingView.VIEW_NAME)
 public class PlayingView extends SpeakerView {
 
-	public static final String VIEW_NAME = "playing";
+    private static final long serialVersionUID = 559452897025885750L;
+    
+    public static final String VIEW_NAME = "playing";
 
-	@Autowired
-	private ApplicationEventBus applicationEventBus;
+    @Autowired
+    private CoverImage coverImage;
 
-	@Autowired
-	private I18N i18n;
+    @Autowired
+    private MusicTitleInfo musicTitleInfo;
 
-	@Autowired
-	private CoverImage coverImage;
+    @Autowired
+    private VolumeSlider volumeSlider;
 
-	@Autowired
-	private MusicTitleInfo musicTitleInfo;
+    @Autowired
+    private SoundSeederService soundSeederService;
 
-	@Autowired
-	private VolumeSlider volumeSlider;
+    @Autowired
+    private SessionEventBus sessionEventBus;
 
-	@Autowired
-	private SoundSeederService soundSeederService;
+    @Override
+    public void enter(ViewChangeEvent event) {
 
-	@Autowired
-	private SessionEventBus sessionEventBus;
+        super.enter(event);
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 559452897025885750L;
+        if (soundSeederService.getLastSong() != null) {
+            sessionEventBus.publish(this, soundSeederService.getLastSong());
+        }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.
-	 * ViewChangeEvent)
-	 */
-	@Override
-	public void enter(ViewChangeEvent event) {
+    }
 
-		super.enter(event);
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        super.afterPropertiesSet();
 
-		if (soundSeederService.getLastSong() != null) {
-			sessionEventBus.publish(this, soundSeederService.getLastSong());
-		}
+        createButtons();
 
-	}
+        // main layout
+        HorizontalLayout layout = new HorizontalLayout();
+        layout.setSizeFull();
+        layout.setSpacing(true);
+        layout.setMargin(true);
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		super.afterPropertiesSet();
+        // cover
+        VerticalLayout coverLayout = new VerticalLayout();
+        coverLayout.setSizeFull();
+        coverImage.setSizeFull();
+        coverImage.addStyleName("cover-image");
+        coverLayout.addComponent(coverImage);
+        coverLayout.setComponentAlignment(coverImage, Alignment.MIDDLE_CENTER);
+        // label
+        musicTitleInfo.setWidth(100, Unit.PERCENTAGE);
+        coverLayout.addComponent(musicTitleInfo);
+        coverLayout.setComponentAlignment(musicTitleInfo, Alignment.MIDDLE_CENTER);
+        coverLayout.setExpandRatio(coverImage, 1.0f);
 
-		createDisconnectButton();
+        // add cover and label
+        layout.addComponent(coverLayout);
+        // add slider
+        layout.addComponent(volumeSlider);
+        layout.setComponentAlignment(volumeSlider, Alignment.MIDDLE_RIGHT);
+        layout.setExpandRatio(coverLayout, 1.0f);
 
-		/*
-		 * add cover image and volume slider
-		 */
-		HorizontalLayout layout = new HorizontalLayout();
-		layout.setSizeFull();
-		layout.setSpacing(true);
-		layout.setMargin(true);
+        setContent(layout);
 
-		VerticalLayout coverLayout = new VerticalLayout();
-		coverLayout.setSizeFull();
-		layout.addComponent(coverLayout);
+    }
 
-		coverImage.setSizeFull();
-		coverLayout.addComponent(coverImage);
-		coverLayout.setComponentAlignment(coverImage, Alignment.MIDDLE_CENTER);
+    private void createButtons() {
+        HorizontalLayout buttonRow = new HorizontalLayout();
+        buttonRow.setSpacing(true);
+        buttonRow.setWidth(100, Unit.PERCENTAGE);
 
-		musicTitleInfo.setWidth(100, Unit.PERCENTAGE);
-		musicTitleInfo.setHeight(150, Unit.PIXELS);
-		coverLayout.addComponent(musicTitleInfo);
-		coverLayout.setComponentAlignment(musicTitleInfo, Alignment.MIDDLE_CENTER);
-		coverLayout.setExpandRatio(coverImage, 0.99f);
+        // stop button
+        Button stopButton = new Button(i18n.get("label.button.disconnect"));
+        stopButton.setIcon(FontAwesome.CHAIN_BROKEN);
+        stopButton.setHeight(100, Unit.PERCENTAGE);
+        stopButton.addClickListener(clickEvent -> handleStopButtonClick(clickEvent));
+        buttonRow.addComponent(stopButton);
+        buttonRow.setComponentAlignment(stopButton, Alignment.MIDDLE_CENTER);
+        buttonRow.setExpandRatio(stopButton, .99f);
 
-		volumeSlider.setOrientation(SliderOrientation.VERTICAL);
-		volumeSlider.setHeight(100, Unit.PERCENTAGE);
-		layout.addComponent(volumeSlider);
-		layout.setComponentAlignment(volumeSlider, Alignment.MIDDLE_CENTER);
+        // config menu
+        MenuBar settingsMenu = getMenuButton("");
+        buttonRow.addComponent(settingsMenu);
+        buttonRow.setComponentAlignment(settingsMenu, Alignment.BOTTOM_RIGHT);
 
-		setContent(layout);
+        addToButtonBar(buttonRow);
+    }
 
-	}
+    /**
+     * This helper method handles the click on the stop button
+     * 
+     * @param clickEvent
+     */
+    private void handleStopButtonClick(ClickEvent clickEvent) {
 
-	/**
-	 * This helper method adds the stop button to the view.
-	 */
-	private void createDisconnectButton() {
-		Button stopButton = new Button(i18n.get("label.button.disconnect"));
-		stopButton.setIcon(FontAwesome.CHAIN_BROKEN);
-		stopButton.setHeight(100, Unit.PERCENTAGE);
-		stopButton.addClickListener(clickEvent -> handleStopButtonClick(clickEvent));
+        // publish stop playing event
+        applicationEventBus.publish(this, StopPlayingEvent.builder().eventSource(this).build());
 
-		VerticalLayout buttonLayout = new VerticalLayout();
-		buttonLayout.setWidth(100, Unit.PERCENTAGE);
-		buttonLayout.addComponent(stopButton);
-		buttonLayout.setComponentAlignment(stopButton, Alignment.MIDDLE_CENTER);
+        // switch to stopped view
+        applicationEventBus.publish(this, ShowStoppedViewEvent.builder().eventSource(this).build());
 
-		addToButtonBar(buttonLayout);
-	}
-
-	/**
-	 * This helper method handles the click on the stop button
-	 * 
-	 * @param clickEvent
-	 */
-	private void handleStopButtonClick(ClickEvent clickEvent) {
-
-		// publish stop playing event
-		applicationEventBus.publish(this, StopPlayingEvent.builder().eventSource(this).build());
-
-		// switch to stopped view
-		applicationEventBus.publish(this, ShowStoppedViewEvent.builder().eventSource(this).build());
-
-	}
+    }
 
 }

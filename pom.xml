@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
 	<groupId>de.flexguse.soundseeder</groupId>
 	<artifactId>soundseeder-speaker-ui</artifactId>
 	<version>0.0.3-SNAPSHOT</version>
@@ -19,8 +18,9 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<vaadin.version>7.6.5</vaadin.version>
+		<vaadin.version>7.6.6</vaadin.version>
 		<java.version>1.8</java.version>
+		<productionMode>false</productionMode>
 	</properties>
 
 	<dependencies>
@@ -41,11 +41,34 @@
 			<artifactId>spring-boot-starter-log4j2</artifactId>
 		</dependency>
 
+<!-- required for the validation used in the Configuration annoted class -->
+		<dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+        </dependency>
+
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-push</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-server</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-client</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-client-compiled</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>com.vaadin</groupId>
+		    <artifactId>vaadin-themes</artifactId>
+		</dependency>
+		
 		<dependency>
 			<groupId>org.vaadin.spring.addons</groupId>
 			<artifactId>vaadin-spring-addon-i18n</artifactId>
@@ -57,6 +80,7 @@
 			<artifactId>vaadin-spring-addon-eventbus</artifactId>
 			<version>0.0.7.RELEASE</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -83,7 +107,6 @@
 			<version>0.5.0</version>
 		</dependency>
 
-
 		<!-- testing dependencies -->
 		<dependency>
 			<groupId>de.flexguse.util.junit</groupId>
@@ -95,6 +118,15 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
+			<!--  DM: added this exclusion due to 
+				java.lang.ClassCastException: org.apache.tomcat.websocket.server.WsServerContainer cannot be cast to io.undertow.websockets.jsr.ServerWebSocketContainer
+			 -->
+			<exclusions>
+	            <exclusion>
+	                <groupId>org.apache.tomcat.embed</groupId>
+	                <artifactId>tomcat-embed-websocket</artifactId>
+	            </exclusion>
+        	</exclusions>
 			<scope>test</scope>
 		</dependency>
 
@@ -117,6 +149,15 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<!-- used for hot swapping; now deactivated due to an issue with shutting down the spring boot server (widfly) 
+				<dependencies>
+			        <dependency>
+			            <groupId>org.springframework</groupId>
+			            <artifactId>springloaded</artifactId>
+			            <version>1.2.5.RELEASE</version>
+			        </dependency>
+			    </dependencies>
+			    -->
 				<executions>
 					<execution>
 						<goals>
@@ -133,7 +174,6 @@
 					</excludes>
 					<executable>true</executable>
 				</configuration>
-
 			</plugin>
 
 			<!-- this plugin is needed to prevent build fails if javadoc is not complete -->
@@ -149,6 +189,58 @@
 						<configuration>
 							<additionalparam>-Xdoclint:none</additionalparam>
 						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+<!-- not quite sure, if this is required for 'compile widgetset' launched from the eclipse vaadin plugin 
+			<plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-compiler-plugin</artifactId>
+			  <version>3.5.1</version>
+			  <configuration>
+			    <compilerArgs>
+			      <arg>-verbose</arg>
+			      <arg>-Xlint:all,-options,-path</arg>
+			    </compilerArgs>
+			  </configuration>
+			</plugin>
+			<plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-clean-plugin</artifactId>
+			  <version>3.0.0</version>
+			</plugin>
+-->	   
+<!--  added in order to be able to launch 'compile theme' directly via the eclipse vaadin plugin.
+However, this fails, error: "theme is not found" -->
+			<plugin>
+				<groupId>com.vaadin</groupId>
+				<artifactId>vaadin-maven-plugin</artifactId>
+				<version>${vaadin.version}</version>
+				<configuration>
+					<extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs>
+					<webappDirectory>${basedir}/target/classes/VAADIN/widgetsets</webappDirectory>
+					<noServer>true</noServer>
+					<draftCompile>false</draftCompile>
+					<compileReport>true</compileReport>
+					<style>OBF</style>
+					<strict>true</strict>
+					<runTarget>http://localhost:8080/</runTarget>
+					<vaadin.theme>soundseeder</vaadin.theme> 
+				</configuration>
+				<executions>
+					<execution>
+						<configuration>
+							<vaadin.theme>soundseeder</vaadin.theme> 
+						</configuration>
+						<goals>
+							<goal>clean</goal>
+							<goal>resources</goal>
+							<goal>update-theme</goal>
+							<goal>update-widgetset</goal>
+							<goal>compile-theme</goal>
+							<goal>compile</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>
