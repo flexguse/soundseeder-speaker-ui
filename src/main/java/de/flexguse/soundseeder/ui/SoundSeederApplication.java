@@ -109,7 +109,7 @@ public class SoundSeederApplication extends UI implements DisposableBean {
 		headerRow.addComponent(logo);
 
 		settingsButton = new Button(i18n.get("label.button.settings"));
-		settingsButton.addClickListener(clickEvent -> applicationEventBus.publish(this,
+		settingsButton.addClickListener(clickEvent -> sessionEventBus.publish(this,
 				ShowConfigurationViewEvent.builder().eventSource(this).build()));
 		settingsButton.setIcon(FontAwesome.EDIT);
 		headerRow.addComponent(settingsButton);
@@ -215,7 +215,7 @@ public class SoundSeederApplication extends UI implements DisposableBean {
 	 * 
 	 * @param event
 	 */
-	@EventBusListenerMethod(scope = EventScope.APPLICATION)
+	@EventBusListenerMethod(scope = EventScope.SESSION)
 	public void handleShowConfigurationViewEvent(ShowConfigurationViewEvent event) {
 
 		getUI().access(() -> {
