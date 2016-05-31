@@ -6,19 +6,18 @@ package de.flexguse.soundseeder.ui.views;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.spring.events.EventBus.ApplicationEventBus;
+import org.vaadin.spring.events.EventBus.SessionEventBus;
 import org.vaadin.spring.i18n.I18N;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Responsive;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.ValoTheme;
 
 import de.flexguse.soundseeder.model.GitRepositoryState;
 import de.flexguse.soundseeder.ui.events.ShowConfigurationViewEvent;
@@ -38,6 +37,9 @@ public abstract class SpeakerView extends VerticalLayout implements View, Initia
 
 	@Autowired
 	protected ApplicationEventBus applicationEventBus;
+	
+	@Autowired
+	private SessionEventBus sessionEventBus;
 
 	@Autowired
 	protected I18N i18n;
@@ -116,7 +118,7 @@ public abstract class SpeakerView extends VerticalLayout implements View, Initia
 	    MenuBar menu = new MenuBar();
 	    MenuBar.MenuItem dropdown = menu.addItem(caption, FontAwesome.EDIT, null);
 	    dropdown.addItem(i18n.get("label.button.settings"), 
-	            clickEvent -> applicationEventBus.publish(this, 
+	            clickEvent -> sessionEventBus.publish(this, 
 	                    ShowConfigurationViewEvent.builder().eventSource(this).build()));
 	    dropdown.addItem(i18n.get("label.button.info"), clickEvent -> {
 	        String info = String.format(
