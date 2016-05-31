@@ -188,7 +188,7 @@ public class SoundSeederApplication extends UI implements DisposableBean {
 	 * 
 	 * @param event
 	 */
-	@EventBusListenerMethod(scope = EventScope.APPLICATION)
+	@EventBusListenerMethod(scope = EventScope.SESSION)
 	public void handleShowConfigurationViewEvent(ShowConfigurationViewEvent event) {
 
 		getUI().access(() -> {

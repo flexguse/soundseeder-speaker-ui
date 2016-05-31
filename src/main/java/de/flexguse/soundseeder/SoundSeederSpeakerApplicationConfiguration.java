@@ -9,7 +9,9 @@ import java.util.Properties;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
@@ -36,6 +38,8 @@ import de.flexguse.soundseeder.service.impl.SoundSeederServiceImpl;
  *
  */
 @Configuration
+@EnableAutoConfiguration
+@ComponentScan
 @EnableI18N
 @EnableEventBus
 public class SoundSeederSpeakerApplicationConfiguration implements InitializingBean {
