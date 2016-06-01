@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.flexguse.soundseeder.ui;
 
 import java.io.IOException;
@@ -29,15 +26,12 @@ import com.vaadin.spring.navigator.SpringViewProvider;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Image;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.ValoTheme;
 
-import de.flexguse.soundseeder.model.GitRepositoryState;
 import de.flexguse.soundseeder.model.SpeakerConfiguration;
 import de.flexguse.soundseeder.service.ConfigurationService;
 import de.flexguse.soundseeder.service.ConfigurationServiceException;
@@ -50,11 +44,13 @@ import de.flexguse.soundseeder.ui.events.VolumeChangedEvent;
 import de.flexguse.soundseeder.ui.views.ConfigurationView;
 import de.flexguse.soundseeder.ui.views.PlayingView;
 import de.flexguse.soundseeder.ui.views.StoppedView;
-
 /**
  * @author Christoph Guse, info@flexguse.de
  *
  */
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Theme("soundseeder")
 @SpringUI(path = "")
 @Title("soundseeder Speaker")
@@ -68,7 +64,6 @@ public class SoundSeederApplication extends UI implements DisposableBean {
 
 	@Autowired
 	private ApplicationEventBus applicationEventBus;
-
 	@Autowired
 	private SessionEventBus sessionEventBus;
 
@@ -88,7 +83,7 @@ public class SoundSeederApplication extends UI implements DisposableBean {
 
 	@Override
 	protected void init(VaadinRequest request) {
-
+	        
 		applicationEventBus.subscribe(this);
 		sessionEventBus.subscribe(this);
 
@@ -151,7 +146,7 @@ public class SoundSeederApplication extends UI implements DisposableBean {
 	 */
 	@EventBusListenerMethod(scope = EventScope.APPLICATION)
 	public void handleShowPlayingViewEvent(ShowPlayingViewEvent event) {
-
+	        log.debug("handleShowPlayingViewEvent called");
 		try {
 			soundSeederService.listen(speakerConfigurationService.loadConfiguration());
 
@@ -173,7 +168,7 @@ public class SoundSeederApplication extends UI implements DisposableBean {
 	 */
 	@EventBusListenerMethod(scope = EventScope.APPLICATION)
 	public void handleShowStoppedViewEvent(ShowStoppedViewEvent event) {
-
+	        log.debug("handleShowStoppedViewEvent called");
 		soundSeederService.stopListening();
 
 		getUI().access(() -> {
@@ -190,7 +185,7 @@ public class SoundSeederApplication extends UI implements DisposableBean {
 	 */
 	@EventBusListenerMethod(scope = EventScope.SESSION)
 	public void handleShowConfigurationViewEvent(ShowConfigurationViewEvent event) {
-
+	        log.debug("handleShowConfigurationViewEvent called");
 		getUI().access(() -> {
 			// switch to configuration view
 			navigator.navigateTo(ConfigurationView.VIEW_NAME);
@@ -206,7 +201,8 @@ public class SoundSeederApplication extends UI implements DisposableBean {
 	 */
 	@EventBusListenerMethod(scope = EventScope.SESSION)
 	public void handleUpdateSpeakerConfigurationEvent(SaveSpeakerConfigurationEvent event) {
-
+	    log.debug("handleUpdateSpeakerConfigurationEvent called, speaker-config: " 
+	            + event.getUpdatedSpeakerConfiguration());
 		try {
 			speakerConfigurationService.saveConfiguration(event.getUpdatedSpeakerConfiguration());
 			speakerConfiguration.fill(event.getUpdatedSpeakerConfiguration());
@@ -224,7 +220,7 @@ public class SoundSeederApplication extends UI implements DisposableBean {
 	 */
 	@EventBusListenerMethod(scope = EventScope.SESSION)
 	public void handleVolumeChanged(VolumeChangedEvent event) {
-
+	        log.debug("handleVolumeChanged called, volume: " + event.getChangedVolume());
 		try {
 
 			speakerConfiguration.setVolume(event.getChangedVolume().doubleValue());

@@ -114,13 +114,13 @@ public class ConfigurationView extends SpeakerView {
 		buttonBar.setWidth(100, Unit.PERCENTAGE);
 
 		/*
-		 * add the stop button
+		 * add the cancel button
 		 */
 		buttonBar.addComponent(cancelButton);
 		buttonBar.setComponentAlignment(cancelButton, Alignment.MIDDLE_CENTER);
 
 		/*
-		 * add the play button
+		 * add the save button
 		 */
 		buttonBar.addComponent(saveButton);
 		buttonBar.setComponentAlignment(saveButton, Alignment.MIDDLE_CENTER);

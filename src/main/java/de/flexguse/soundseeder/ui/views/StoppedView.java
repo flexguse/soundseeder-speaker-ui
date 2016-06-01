@@ -21,7 +21,6 @@ import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.ValoTheme;
 
 import de.flexguse.soundseeder.model.SpeakerConfiguration;
 import de.flexguse.soundseeder.service.ConfigurationService;
@@ -124,7 +123,7 @@ public class StoppedView extends SpeakerView {
             // play button
             Button connectButton = new Button(i18n.get("label.button.connect"));
             connectButton.setIcon(FontAwesome.CHAIN);
-            connectButton.addClickListener(clickEvent -> handlePlayButtonClick(clickEvent));
+            connectButton.addClickListener(this::handlePlayButtonClick);
             buttonRow.addComponent(connectButton);
             buttonRow.setComponentAlignment(connectButton, Alignment.MIDDLE_CENTER);
             buttonRow.setExpandRatio(connectButton, .99f);

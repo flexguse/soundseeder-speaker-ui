@@ -105,7 +105,7 @@ public class PlayingView extends SpeakerView {
         Button stopButton = new Button(i18n.get("label.button.disconnect"));
         stopButton.setIcon(FontAwesome.CHAIN_BROKEN);
         stopButton.setHeight(100, Unit.PERCENTAGE);
-        stopButton.addClickListener(clickEvent -> handleStopButtonClick(clickEvent));
+        stopButton.addClickListener(this::handleStopButtonClick);
         buttonRow.addComponent(stopButton);
         buttonRow.setComponentAlignment(stopButton, Alignment.MIDDLE_CENTER);
         buttonRow.setExpandRatio(stopButton, .99f);

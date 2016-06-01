@@ -32,7 +32,7 @@
 		</rollingPolicy>
 	</appender>
 	-->
-	<logger name="de.flexguse.soundseeder" level="INFO">
+	<logger name="de.flexguse.soundseeder" level="DEBUG">
     	<appender-ref ref="FILE" />
     	<appender-ref ref="CONSOLE" />
 	</logger>
@@ -42,6 +42,7 @@
     	<appender-ref ref="CONSOLE" />
 	</root>
 	
+	<!--  TODO: configure to use profiles -->
 	<springProfile name="staging">
     	<!-- configuration to be enabled when the "staging" profile is active -->
 	</springProfile>
