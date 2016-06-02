@@ -38,6 +38,7 @@ import de.flexguse.soundseeder.service.ConfigurationServiceException;
 import de.flexguse.soundseeder.service.SoundSeederService;
 import de.flexguse.soundseeder.ui.events.SaveSpeakerConfigurationEvent;
 import de.flexguse.soundseeder.ui.events.ShowConfigurationViewEvent;
+import de.flexguse.soundseeder.ui.events.ShowCurrentPlaybackViewEvent;
 import de.flexguse.soundseeder.ui.events.ShowPlayingViewEvent;
 import de.flexguse.soundseeder.ui.events.ShowStoppedViewEvent;
 import de.flexguse.soundseeder.ui.events.VolumeChangedEvent;
@@ -159,6 +160,17 @@ public class SoundSeederApplication extends UI implements DisposableBean {
 			Notification.show(e.getMessage(), Type.ERROR_MESSAGE);
 		}
 
+	}
+
+	/**
+	 * This event handler method shows the currently correct playback view.
+	 * 
+	 * @param event
+	 */
+	@EventBusListenerMethod(scope = EventScope.APPLICATION)
+	public void handleShowCurrentViewEvent(ShowCurrentPlaybackViewEvent event) {
+		log.debug("handleShowPlayingViewEvent called");
+		setStartView();
 	}
 
 	/**

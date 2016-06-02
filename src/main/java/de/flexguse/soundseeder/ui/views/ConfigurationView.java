@@ -23,6 +23,7 @@ import com.vaadin.ui.VerticalLayout;
 import de.flexguse.soundseeder.model.SpeakerConfiguration;
 import de.flexguse.soundseeder.ui.component.ConfigurationForm;
 import de.flexguse.soundseeder.ui.events.SaveSpeakerConfigurationEvent;
+import de.flexguse.soundseeder.ui.events.ShowCurrentPlaybackViewEvent;
 import de.flexguse.soundseeder.ui.events.ShowStoppedViewEvent;
 
 /**
@@ -169,8 +170,8 @@ public class ConfigurationView extends SpeakerView {
 			sessionEventBus.publish(this, SaveSpeakerConfigurationEvent.builder().eventSource(this)
 					.updatedSpeakerConfiguration(configurationForm.getSpeakerConfiguration()).build());
 
-			// show stopped view
-			applicationEventBus.publish(this, ShowStoppedViewEvent.builder().eventSource(this).build());
+			// show current view
+			applicationEventBus.publish(this, ShowCurrentPlaybackViewEvent.builder().eventSource(this).build());
 
 		} catch (CommitException e) {
 			// do nothing, just show the errors in the form
@@ -185,8 +186,8 @@ public class ConfigurationView extends SpeakerView {
 	 */
 	private void handleCancelButtonClick(ClickEvent clickEvent) {
 
-		// just show the stopped view
-		applicationEventBus.publish(this, ShowStoppedViewEvent.builder().eventSource(this).build());
+		// just show the current view
+		applicationEventBus.publish(this, ShowCurrentPlaybackViewEvent.builder().eventSource(this).build());
 
 	}
 

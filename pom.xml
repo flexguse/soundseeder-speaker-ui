@@ -124,7 +124,7 @@
 		<dependency>
 			<groupId>com.soundseeder</groupId>
 			<artifactId>soundseeder-speaker</artifactId>
-			<version>0.5.0</version>
+			<version>0.5.1</version>
 		</dependency>
 
 		<!-- testing dependencies -->

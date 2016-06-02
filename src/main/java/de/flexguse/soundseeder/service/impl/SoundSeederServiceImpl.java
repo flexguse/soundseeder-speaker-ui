@@ -15,6 +15,7 @@ import com.soundseeder.speaker.Speaker;
 import com.soundseeder.speaker.SpeakerServiceAdapter;
 import com.soundseeder.speaker.interfaces.NotificationListener;
 import com.soundseeder.speaker.model.ChannelConf;
+import com.soundseeder.speaker.model.PlaybackStatus;
 import com.soundseeder.speaker.model.Song;
 
 import de.flexguse.soundseeder.model.SpeakerConfiguration;
@@ -79,6 +80,7 @@ public class SoundSeederServiceImpl implements SoundSeederService, DisposableBea
 			speakerServiceAdapter.setDeviceName(configuration.getSpeakerName());
 			speakerServiceAdapter.setMusicStreamVolume(configuration.getVolume().intValue());
 			speakerServiceAdapter.setSpeakerChannelConf(converter.convert(configuration.getSpeakerChannel()), true);
+			speakerServiceAdapter.setActiveMixerByIndex(configuration.getMixerIndex().intValue());
 		}
 
 		if (speakerServiceAdapter.isPlaying()) {
@@ -228,6 +230,12 @@ public class SoundSeederServiceImpl implements SoundSeederService, DisposableBea
 
 		applicationEventBus.publish(this, VolumeChangedEvent.builder().changedVolume(volume).eventSource(this).build());
 
+	}
+
+	@Override
+	public void onPlaybackStatusChange(PlaybackStatus arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
