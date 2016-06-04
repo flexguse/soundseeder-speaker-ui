@@ -19,6 +19,7 @@ import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.navigator.Navigator;
+import com.vaadin.server.Responsive;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
@@ -45,6 +46,7 @@ import de.flexguse.soundseeder.ui.events.VolumeChangedEvent;
 import de.flexguse.soundseeder.ui.views.ConfigurationView;
 import de.flexguse.soundseeder.ui.views.PlayingView;
 import de.flexguse.soundseeder.ui.views.StoppedView;
+import de.flexguse.soundseeder.util.SpeakerUIConstants;
 /**
  * @author Christoph Guse, info@flexguse.de
  *
@@ -90,7 +92,7 @@ public class SoundSeederApplication extends UI implements DisposableBean {
 
 		// create master layout
 		final VerticalLayout root = new VerticalLayout();
-		root.addStyleName("root");
+		root.addStyleName(SpeakerUIConstants.STYLE_ROOT);
 		root.setSizeFull();
 		root.setMargin(true);
 		root.setSpacing(true);
@@ -98,27 +100,28 @@ public class SoundSeederApplication extends UI implements DisposableBean {
 		// header
 		CssLayout headerRow = new CssLayout();
 		headerRow.setSizeUndefined();
-		headerRow.addStyleName("header");
+		headerRow.addStyleName(SpeakerUIConstants.STYLE_HEADER);
 		Image logo = new Image("", new ThemeResource("img/sspLogo.png"));
-		logo.addStyleName("logo");
+		logo.addStyleName(SpeakerUIConstants.STYLE_LOGO);
 		logo.setSizeUndefined();
 		headerRow.addComponent(logo);
 		root.addComponent(headerRow);
-		root.setComponentAlignment(headerRow, Alignment.MIDDLE_CENTER);
+		root.setComponentAlignment(headerRow, Alignment.BOTTOM_CENTER);
 
 		// view panel
 		final Panel viewPanel = new Panel();
-		viewPanel.addStyleName("view-panel");
-		viewPanel.setSizeFull();		
+		viewPanel.addStyleName(SpeakerUIConstants.STYLE_VIEW_PANEL);
+		viewPanel.setSizeFull();	
 		root.addComponent(viewPanel);
-		root.setComponentAlignment(viewPanel, Alignment.MIDDLE_CENTER);
+		root.setComponentAlignment(viewPanel, Alignment.TOP_CENTER);
 		root.setExpandRatio(viewPanel, 1.0f);
+		Responsive.makeResponsive(viewPanel);
 		
 		navigator = new Navigator(this, viewPanel);
 		navigator.addProvider(viewProvider);
 
 		setSizeFull();
-		addStyleName("main-view");
+		addStyleName(SpeakerUIConstants.STYLE_MAIN_VIEW);
 		
 		setContent(root);
 	              

@@ -10,6 +10,7 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -28,6 +29,7 @@ import de.flexguse.soundseeder.service.ConfigurationServiceException;
 import de.flexguse.soundseeder.ui.component.VolumeSlider;
 import de.flexguse.soundseeder.ui.events.ShowPlayingViewEvent;
 import de.flexguse.soundseeder.ui.events.StartPlayingEvent;
+import de.flexguse.soundseeder.util.SpeakerUIConstants;
 
 /**
  * @author Christoph Guse, info@flexguse.de
@@ -87,19 +89,23 @@ public class StoppedView extends SpeakerView {
 		Image icon = new Image();
 		icon.setSource(iconResource);
 		icon.setSizeFull();
-		icon.addStyleName("cover-image");
+		icon.addStyleName(SpeakerUIConstants.STYLE_COVER_IMAGE);
 		
-		// label
+		// label layout
+		final VerticalLayout songInfoLayout = new VerticalLayout();
+		songInfoLayout.addStyleName(SpeakerUIConstants.STYLE_MUSIC_INFO_PANE);
+		//songInfoLayout.setMargin(true);
 		Label disconnectedInfo = new Label();
 		disconnectedInfo.setValue(i18n.get("label.disconnected"));
-		disconnectedInfo.setStyleName("music_title");
+		disconnectedInfo.addStyleName(SpeakerUIConstants.STYLE_MUSIC_TITLE);
+		songInfoLayout.addComponent(disconnectedInfo);
+		songInfoLayout.setComponentAlignment(disconnectedInfo, Alignment.MIDDLE_CENTER);
 
 		VerticalLayout stopIconLayout = new VerticalLayout();
+		stopIconLayout.addStyleName(SpeakerUIConstants.STYLE_MUSIC_PANE);
                 stopIconLayout.setSizeFull();
-                stopIconLayout.setSpacing(true);
-                stopIconLayout.setMargin(true);
 		stopIconLayout.addComponent(icon);
-		stopIconLayout.addComponent(disconnectedInfo);
+		stopIconLayout.addComponent(songInfoLayout);
 		stopIconLayout.setExpandRatio(icon, 1.0f);
 
 		// add cover and label
@@ -114,28 +120,16 @@ public class StoppedView extends SpeakerView {
 
 		createButtons();
 	}
+
+	void createButtons() {
+	    // play button
+	    Button connectButton = new Button(i18n.get("label.button.connect"));
+	    connectButton.setIcon(FontAwesome.CHAIN);
+	    connectButton.addClickListener(this::handlePlayButtonClick);
+
+	    super.createButtons(connectButton);
+	}
 	
-	private void createButtons() {
-            HorizontalLayout buttonRow = new HorizontalLayout();
-            buttonRow.setSpacing(true);
-            buttonRow.setWidth(100, Unit.PERCENTAGE);
-
-            // play button
-            Button connectButton = new Button(i18n.get("label.button.connect"));
-            connectButton.setIcon(FontAwesome.CHAIN);
-            connectButton.addClickListener(this::handlePlayButtonClick);
-            buttonRow.addComponent(connectButton);
-            buttonRow.setComponentAlignment(connectButton, Alignment.MIDDLE_CENTER);
-            buttonRow.setExpandRatio(connectButton, .99f);
-            
-            // config menu
-            MenuBar settingsMenu = getMenuButton("");
-            buttonRow.addComponent(settingsMenu);
-            buttonRow.setComponentAlignment(settingsMenu, Alignment.BOTTOM_RIGHT);
-            
-            addToButtonBar(buttonRow);
-        }
-
 	/**
 	 * This helper method handles the play button click.
 	 * 

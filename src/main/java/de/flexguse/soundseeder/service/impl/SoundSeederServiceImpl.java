@@ -22,14 +22,17 @@ import de.flexguse.soundseeder.model.SpeakerConfiguration;
 import de.flexguse.soundseeder.model.converter.SpeakerChannelToChannelConfConverter;
 import de.flexguse.soundseeder.service.NetworkInterfaceService;
 import de.flexguse.soundseeder.service.SoundSeederService;
+import de.flexguse.soundseeder.ui.SoundSeederApplication;
 import de.flexguse.soundseeder.ui.events.SongChangeEvent;
 import de.flexguse.soundseeder.ui.events.VolumeChangedEvent;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Christoph Guse, info@flexguse.de
  *
  */
+@Slf4j
 public class SoundSeederServiceImpl implements SoundSeederService, DisposableBean, NotificationListener {
 
 	@Autowired
@@ -197,7 +200,7 @@ public class SoundSeederServiceImpl implements SoundSeederService, DisposableBea
 
 	@Override
 	public void onChannelConfChange(ChannelConf channelConfiguration) {
-		
+	        log.debug("onChannelConfChange called: channgelConfig: " + channelConfiguration);
 		// TODO: update speaker configuration, save configuration
 		String test = "";
 		
@@ -206,7 +209,7 @@ public class SoundSeederServiceImpl implements SoundSeederService, DisposableBea
 	@Override
 	public void onPlayerDataChanged() {
 		// TODO Auto-generated method stub
-
+	    log.debug("onPlayerDataChanged called");
 	}
 
 	@Override
@@ -214,7 +217,7 @@ public class SoundSeederServiceImpl implements SoundSeederService, DisposableBea
 
 		lastSong = SongChangeEvent.builder().albumName(song.getAlbumName()).artistName(song.getArtistName())
 				.songDuration(song.getDurationFormatted()).songName(song.getSongName())
-				.playerIp(speakerServiceAdapter.getConnectedPlayer().getIp()).build();
+				.playerIp(speakerServiceAdapter.getConnectedPlayer().getIp()).eventSource(this).build();
 
 		applicationEventBus.publish(this, lastSong);
 

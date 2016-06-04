@@ -9,19 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.spring.events.EventBus;
 import org.vaadin.spring.events.EventScope;
 import org.vaadin.spring.events.annotation.EventBusListenerMethod;
-import org.vaadin.spring.i18n.I18N;
 
 import com.vaadin.data.Property;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.shared.ui.slider.SliderOrientation;
 import com.vaadin.spring.annotation.ViewScope;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Slider;
-import com.vaadin.ui.themes.ValoTheme;
 
 import de.flexguse.soundseeder.model.SpeakerConfiguration;
 import de.flexguse.soundseeder.ui.events.VolumeChangedEvent;
+import de.flexguse.soundseeder.util.SpeakerUIConstants;
 
 /**
  * @author Christoph Guse, info@flexguse.de
@@ -32,9 +30,6 @@ import de.flexguse.soundseeder.ui.events.VolumeChangedEvent;
 public class VolumeSlider extends Slider implements InitializingBean, DisposableBean {
 
 	private static final long serialVersionUID = -7110455962158736894L;
-
-	@Autowired
-	private I18N i18n;
 
 	@Autowired
 	private EventBus.ApplicationEventBus applicationEventBus;
@@ -50,8 +45,7 @@ public class VolumeSlider extends Slider implements InitializingBean, Disposable
 
 		applicationEventBus.subscribe(this);
 		
-		//setCaption(i18n.get("label.volume"));
-		addStyleName("volume-slider");
+		addStyleName(SpeakerUIConstants.STYLE_VOLUME_SLIDER);
 		setHeight(100, Unit.PERCENTAGE);
                 setOrientation(SliderOrientation.VERTICAL);
 		setMin(0);
@@ -90,7 +84,7 @@ public class VolumeSlider extends Slider implements InitializingBean, Disposable
 		applicationEventBus.publish(this, volumeChangeEvent);
 
 		/*
-		 * publish the change vent in the sessionEventBus so the volume is
+		 * publish the change event in the sessionEventBus so the volume is
 		 * changed and the updated configuration is saved. this needs only to be
 		 * done once.
 		 */

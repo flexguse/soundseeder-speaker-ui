@@ -12,7 +12,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.3.5.RELEASE</version>
+		<version>1.4.0.BUILD-SNAPSHOT</version>
 		<relativePath />
 	</parent>
 
@@ -23,56 +23,123 @@
 		<productionMode>false</productionMode>
 	</properties>
 
+	<repositories>
+		<!-- vaadin repos -->
+		<repository>
+			<id>vaadin-addons</id>
+			<url>http://maven.vaadin.com/vaadin-addons</url>
+		</repository>
+		<repository>
+            <id>vaadin-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+		<!-- spring repositories -->
+    	<!-- not needed if a .RELEASE version of spring-boot is used -->
+	    <repository>
+	        <id>spring-snapshots</id>
+	        <name>Spring Snapshots</name>
+	        <url>https://repo.spring.io/libs-snapshot</url>
+	        <snapshots>
+	            <enabled>true</enabled>
+	        </snapshots>
+	    </repository> 
+	</repositories>
+	
+	<pluginRepositories>
+		<!-- vaadin repos -->
+        <pluginRepository>
+            <id>vaadin-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+		<!-- spring repositories -->
+    	<!-- not needed if a .RELEASE version of spring-boot is used -->
+        <pluginRepository>
+            <id>spring-snapshots</id>
+            <url>http://repo.spring.io/snapshot</url>
+        </pluginRepository> 
+    </pluginRepositories>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.vaadin</groupId>
+				<artifactId>vaadin-bom</artifactId>
+				<version>${vaadin.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	
 	<dependencies>
 		<dependency>
-			<groupId>com.vaadin</groupId>
-			<artifactId>vaadin-spring-boot-starter</artifactId>
-			<version>1.0.0</version>
-			<!-- in case you want to use a different logging framework (log4j2 for example) 
-				 disable spring boots own logging here and implement your own. Use own configuration file, e.g. log4j2.xml. 
-			     In order to use spring boot logging (logback) comment out this exclusion:
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-starter-logging</artifactId>
-				</exclusion>
-				<exclusion>
-					<artifactId>spring-boot-starter-tomcat</artifactId>
-					<groupId>org.springframework.boot</groupId>
-				</exclusion>
-			</exclusions>
-			-->
-		</dependency>
-
-		<dependency>
+        	<groupId>org.springframework.boot</groupId>
+        	<artifactId>spring-boot-starter-web</artifactId>
+        	<exclusions>
+        		<!--  The Spring Boot starters (spring-boot-starter-web in particular) use Tomcat as an embedded container 
+					  by default. tomcat will be excluded as dependency beacuse undertow is used --> 
+		        <exclusion>
+		            <groupId>org.springframework.boot</groupId>
+		            <artifactId>spring-boot-starter-tomcat</artifactId>
+		        </exclusion>
+		    </exclusions>
+    	</dependency>
+    	<!--  use undertow instead of tomact -->
+    	<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-undertow</artifactId>
 		</dependency>
-		
 <!-- The dependency spring-boot-starter includes the dependencies for logging spring-boot-starter-logging, 
 	 so we need not add the logging dependency again. The spring-boot-starter-logging includes SLF4J and logback 
 	 dependencies with appropriate SLF4J wrappers for other logging libraries.
 	 Use this dependecy only if you want to use a custom logger (such as log4j, log4j2, etc.)
-		
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-log4j2</artifactId>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-web</artifactId>
 			<version>2.5</version>
 		</dependency>
 -->
-
-<!-- required for the validation used in the Configuration annoted class -->
+		<!-- required for the validation used in the Configuration annoted class -->
 		<dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
         </dependency>
-
+        
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-spring-boot-starter</artifactId>
+			<version>1.0.0</version>
+			<exclusions>
+				<!-- in case you want to use a different logging framework (log4j2 for example) 
+				 disable spring boots own logging here and implement your own. Use own configuration file, e.g. log4j2.xml. 
+			     In order to use spring boot logging (logback) comment out this exclusion:
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+				-->
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-tomcat</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-push</artifactId>
@@ -94,13 +161,11 @@
 		    <groupId>com.vaadin</groupId>
 		    <artifactId>vaadin-themes</artifactId>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.vaadin.spring.addons</groupId>
 			<artifactId>vaadin-spring-addon-i18n</artifactId>
 			<version>0.0.7.RELEASE</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.vaadin.spring.addons</groupId>
 			<artifactId>vaadin-spring-addon-eventbus</artifactId>
@@ -110,7 +175,6 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.16.6</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -150,25 +214,13 @@
         	</exclusions>
 			<scope>test</scope>
 		</dependency>
-
 	</dependencies>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.vaadin</groupId>
-				<artifactId>vaadin-bom</artifactId>
-				<version>${vaadin.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
+				<!-- maven-plugin used to package the project as an executable jar -->
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<!-- used for hot swapping; now deactivated due to an issue with shutting down the spring boot server (widfly) 
 				<dependencies>
@@ -242,8 +294,10 @@ However, this fails, error: "theme is not found" -->
 					<extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs>
 					<webappDirectory>${basedir}/target/classes/VAADIN/widgetsets</webappDirectory>
 					<noServer>true</noServer>
+					 <!-- Remove draftCompile when project is ready -->
 					<draftCompile>false</draftCompile>
-					<compileReport>true</compileReport>
+					<!-- Compile report is not typically needed either, saves hunreds of MB disk -->
+					<compileReport>false</compileReport>
 					<style>OBF</style>
 					<strict>true</strict>
 					<runTarget>http://localhost:8080/</runTarget>
@@ -493,14 +547,60 @@ However, this fails, error: "theme is not found" -->
 			<!-- END OF GIT COMMIT ID PLUGIN CONFIGURATION -->
 
 		</plugins>
+		
+		<pluginManagement>
+            <plugins>
+                <!--This plugin's configuration is used to store Eclipse 
+                m2e settings only. It has no influence on the Maven build itself. -->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>com.vaadin</groupId>
+                                        <artifactId>
+                                            vaadin-maven-plugin
+                                        </artifactId>
+                                        <versionRange>
+                                            [7.5.5,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>resources</goal>
+                                            <goal>update-widgetset</goal>
+                                            <goal>compile</goal>
+                                            <goal>update-theme</goal>
+                                            <goal>compile-theme</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore></ignore>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-eclipse-plugin</artifactId>
+                    <configuration>
+                        <wtpversion>2.0</wtpversion>
+                        <additionalProjectnatures>
+                            <projectnature>com.vaadin.integration.eclipse.widgetsetNature</projectnature>
+                        </additionalProjectnatures>
+                        <additionalBuildcommands>
+                            <buildcommand>com.vaadin.integration.eclipse.widgetsetBuilder</buildcommand>
+                            <buildcommand>com.vaadin.integration.eclipse.addonStylesBuilder</buildcommand>
+                        </additionalBuildcommands>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+		
+		
 	</build>
-
-	<repositories>
-		<repository>
-			<id>vaadin-addons</id>
-			<url>http://maven.vaadin.com/vaadin-addons</url>
-		</repository>
-
-	</repositories>
 
 </project>

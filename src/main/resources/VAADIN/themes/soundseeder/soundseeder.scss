@@ -3,130 +3,209 @@
 // max width used for the main view, should be equal to the original width of the logo
 $max_width: 700px;
 
+$max_height: 505px;
+$min_height: 245px;
+
 @mixin soundseeder {
 	
-  @include valo;
+	@include valo;
 
-  /* main areas  ------------------------ */
+	/* main areas  ------------------------ */
   
-  .main-view {
+	.main-view {
 	
-	.root {
-		overflow: visible;
+		.root {
+			overflow: visible;
+			
+			.header {
+		  		max-width: $max_width;
+			}
+			.logo {
+				width: 100%;
+			}
 		
-		.header {
-	  		max-width: $max_width;
+			.view-panel {
+				// do not allow the panel get wider than the logo
+				max-width: $max_width;
+				min-height: $min_height;
+				max-height: $max_height;
+				
+				.speaker-view {
+					// ie fix (otherwise a scrollbar is displayed)
+					.v-panel-content-main-content {
+						overflow:hidden;
+					}
+					 
+					.main-content {
+						min-height: 100px;
+						
+						box-shadow: -2px 2px 4px -3px rgba(0, 0, 0, 0.6), 2px 2px 4px -3px rgba(0, 0, 0, 0.6);
+						
+						.music-pane {
+							padding-bottom: 1%;
+							.music-info-pane {
+								margin-top: 1%;
+							}
+						}
+						
+						.v-slot-cover-image {
+							.v-image-cover-image {
+							  	width: auto;
+							  	min-height: 60px;
+							  	padding-bottom: 4%;
+							}
+						}
+					 
+						.v-label-music_title {
+							font-size: 1.4em;
+						 	font-weight: bold;
+						 	text-align: center;
+						}
+						.v-label-music_artist {
+							font-weight: bold;
+						 	text-align: center;
+						}
+					  
+						.volume-slider {
+						}
+					  
+						// ugly workaround to position the slider in a fixed position at the panel's top right corner
+						.v-slot-volume-slider {
+							position: absolute !important;
+							top: 0;
+							right: 0;
+						}
+					  
+						// slider caption bigger font
+						.v-caption-volume-slider {
+						 	font-size: 24px;
+							padding-left: 8px;
+							padding-bottom: 0px;
+						}
+					  
+						.v-slider-volume-slider {
+					  		padding: 0px 0 11px 0;
+						}
+					}
+					
+					.button-bar {
+					}
+				}
+			}
+		
+			.footer {
+				max-width: $max_width;
+			}
+		}	  
+	}
+    
+	/* responsivness ------------------------- */
+  
+  	//.main-view .root .view-panel .speaker-view 
+	.main-content {
+  
+	  	min-height: 170px;
+	  	
+	  	// width ranges
+	  	
+		&[width-range~="0-320px"] {
+			.v-label-music_title {
+				font-size: 0.9em !important;
+			}
+	
+			.v-caption-volume-slider {
+			 	font-size: 18px !important;
+				padding-left: 12px !important;
+			 }
 		}
-		.logo {
-			width: 100%;
+		&[width-range~="320-520px"] {
+			.v-label-music_title {
+				font-size: 1.1em !important;
+			}
+		}
+		&[width-range~="580-768px"] {
+			.v-label-music_title {
+				font-size: 1.4em !important;
+				font-weight: bold !important;
+			}
+		}
+		&[width-range~="768px-1024px"] {
+			.v-label-music_title {
+				font-size: 1.4em !important;
+				font-weight: bold !important;
+			}
+		}
+		&[width-range~="1024px-"] {
 		}
 		
-		.view-panel {
-			// do not allow the panel get wider than the logo
-			max-width: $max_width;
-			min-height: 245px;
+		// height ranges
+		
+		&[height-range~="0-300px"] {
+			.v-caption-volume-slider {
+			 	font-size: 18px;
+				padding-left: 12px;
+			 }
+		}
+		&[height-range~="301-500px"] {
+		}
+		&[height-range~="501-"] {
+		}  
+	}
+  
+  	.view-panel {
+		// width ranges
+		&[width-range~="0-320px"] {
+			height: 50% !important;
+			width: auto;
 			
 			.speaker-view {
-			
-				.main-content {
-					min-height: 100px;
-					
-					 .v-image-cover-image {
-					  	width: auto;
-					  	min-height: 60px;
-					  }
-					  
-					  .v-label-music_title {
-						font-size: 1.4em;
-					  	font-weight: bold;
-					  }
-					  .v-label-music_artist {
-					  	font-weight: bold;
-					  }
-					  
-					  .volume-slider {
-					  }
-					  
-					  // ugly workaround to position the slider in a fixed position at the panel's top right corner
-					  .v-slot-volume-slider {
-						position: absolute !important;
-						top: 0;
-						right: 0;
-					  }
-					  
-					  // slider caption bigger font
-					  .v-caption-volume-slider {
-					  	font-size: 24px;
-						padding-left: 8px;
-						padding-bottom: 0px;
-					  }
-					  
-					  .v-slider-volume-slider {
-					  	padding: 0px 0 11px 0;
-					  }
-				}
+				width: auto;
 				
-				.button-bar {
+				.main-content {
+					width: 100%;
+				}
+			}
+	  	}
+	}
+	
+	/*
+	.button-bar {
+	  	// width ranges
+		&[width-range~="0-320px"] {
+			.v-button {
+				//@include valo-button-style($unit-size: $v-unit-size--small, null, null, null, $font-size: $v-font-size--small, null);
+				font-weight: 200;
+				font-size: 12px;
+				height: 22px;
+				padding: 0px 8px;
+				
+				.v-icon {
+					font-size: 10px;
+				}
+			}
+			.config-menu {
+				//@include valo-menubar-style(null, $unit-size: $v-unit-size--small);
+				//font-size: $v-font-size--small;
+				font-size: 12px;
+				height: 22px;
+				line-height: 17px;
+			}
+	  	}
+	}
+	
+	// woraround: use circa width of the body element, because the popupContent is not a child from button-bar,
+	// the width: 390px corresponds ca. to the button-bar width: 320px  
+	&[width-range~="0-390px"] {
+		.popupContent {
+			.config-menu {
+				.v-menubar-menuitem {
+					line-height: 16px;
+					font-size: 12px;
+					padding: 0 10px 0 10px;
+					font-weight: 200;
 				}
 			}
 		}
-		
-		.footer {
-			max-width: $max_width;
-		}
-	}	  
-  }
-    
-   /* responsivness ------------------------- */
-  
-  //.main-view .root .view-panel .speaker-view 
-  .main-content {
-  
-  	min-height: 170px;
-  	
-  	// width ranges
-  	
-	&[width-range~="0-320px"] {
-		.v-label-music_title {
-			font-size: 0.6em !important;
-		}
-
-		.v-caption-volume-slider {
-		 	font-size: 18px !important;
-			padding-left: 12px !important;
-		 }
 	}
-	&[width-range~="320-520px"] {
-		.v-label-music_title {
-			font-size: 0.8em !important;
-		}
-	}
-	&[width-range~="580-768px"] {
-		.v-label-music_title {
-			font-size: 1.1em !important;
-			font-weight: bold !important;
-		}
-	}
-	&[width-range~="768px-1024px"] {
-		.v-label-music_title {
-			font-size: 1.4em !important;
-			font-weight: bold !important;
-		}
-	}
-	&[width-range~="1024px-"] {
-	}
-	
-	// height ranges
-	
-	&[height-range~="0-300px"] {
-		.v-caption-volume-slider {
-		 	font-size: 18px;
-			padding-left: 12px;
-		 }
-	}
-	&[height-range~="301-500px"] {
-	}
-	&[height-range~="501-"] {
-	}  
-  }
+	*/
 }

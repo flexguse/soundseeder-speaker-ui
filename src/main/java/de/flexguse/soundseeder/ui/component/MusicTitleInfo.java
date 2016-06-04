@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.vaadin.spring.events.EventBus;
 import org.vaadin.spring.events.EventScope;
 import org.vaadin.spring.events.annotation.EventBusListenerMethod;
+import org.vaadin.spring.i18n.I18N;
 
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Alignment;
@@ -17,6 +18,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
 import de.flexguse.soundseeder.ui.events.SongChangeEvent;
+import de.flexguse.soundseeder.util.SpeakerUIConstants;
 
 /**
  * The {@link MusicTitleInfo} component consists of two rows:
@@ -38,6 +40,9 @@ public class MusicTitleInfo extends VerticalLayout implements InitializingBean, 
 	private Label artist;
 
 	@Autowired
+        private I18N i18n;
+	
+	@Autowired
 	private EventBus.ApplicationEventBus applicationEventBus;
 
 	@Autowired
@@ -55,18 +60,15 @@ public class MusicTitleInfo extends VerticalLayout implements InitializingBean, 
 		sessionEventBus.subscribe(this);
 
 		setResponsive(true);
+		addStyleName(SpeakerUIConstants.STYLE_MUSIC_INFO_PANE);
 
-		setWidth(100, Unit.PERCENTAGE);
-		setSpacing(true);
-		setMargin(true);
-
-		title = new Label("no title information");
-		title.addStyleName("music_title");
+		title = new Label(i18n.get("label.no.title"));
+		title.addStyleName(SpeakerUIConstants.STYLE_MUSIC_TITLE);
 		addComponent(title);
 		setComponentAlignment(title, Alignment.MIDDLE_CENTER);
 
-		artist = new Label("no artist information");
-		artist.addStyleName("music_artist");
+		artist = new Label(i18n.get("label.no.artist"));
+		artist.addStyleName(SpeakerUIConstants.STYLE_MUSIC_ARTIST);
 		addComponent(artist);
 		setComponentAlignment(artist, Alignment.MIDDLE_CENTER);
 

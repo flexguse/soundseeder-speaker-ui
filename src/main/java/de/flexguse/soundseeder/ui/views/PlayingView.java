@@ -22,6 +22,7 @@ import de.flexguse.soundseeder.ui.component.MusicTitleInfo;
 import de.flexguse.soundseeder.ui.component.VolumeSlider;
 import de.flexguse.soundseeder.ui.events.ShowStoppedViewEvent;
 import de.flexguse.soundseeder.ui.events.StopPlayingEvent;
+import de.flexguse.soundseeder.util.SpeakerUIConstants;
 
 /**
  * @author Christoph Guse, info@flexguse.de
@@ -64,19 +65,17 @@ public class PlayingView extends SpeakerView {
     public void afterPropertiesSet() throws Exception {
         super.afterPropertiesSet();
 
-        createButtons();
-
         // main layout
         HorizontalLayout layout = new HorizontalLayout();
         layout.setSizeFull();
         layout.setSpacing(true);
-        layout.setMargin(true);
 
         // cover
         VerticalLayout coverLayout = new VerticalLayout();
+        coverLayout.addStyleName(SpeakerUIConstants.STYLE_MUSIC_PANE);
         coverLayout.setSizeFull();
         coverImage.setSizeFull();
-        coverImage.addStyleName("cover-image");
+        coverImage.addStyleName(SpeakerUIConstants.STYLE_COVER_IMAGE);
         coverLayout.addComponent(coverImage);
         coverLayout.setComponentAlignment(coverImage, Alignment.MIDDLE_CENTER);
         // label
@@ -93,29 +92,17 @@ public class PlayingView extends SpeakerView {
         layout.setExpandRatio(coverLayout, 1.0f);
 
         setContent(layout);
-
+        
+        createButtons();
     }
 
-    private void createButtons() {
-        HorizontalLayout buttonRow = new HorizontalLayout();
-        buttonRow.setSpacing(true);
-        buttonRow.setWidth(100, Unit.PERCENTAGE);
-
+    void createButtons() {
         // stop button
         Button stopButton = new Button(i18n.get("label.button.disconnect"));
         stopButton.setIcon(FontAwesome.CHAIN_BROKEN);
-        stopButton.setHeight(100, Unit.PERCENTAGE);
         stopButton.addClickListener(this::handleStopButtonClick);
-        buttonRow.addComponent(stopButton);
-        buttonRow.setComponentAlignment(stopButton, Alignment.MIDDLE_CENTER);
-        buttonRow.setExpandRatio(stopButton, .99f);
 
-        // config menu
-        MenuBar settingsMenu = getMenuButton("");
-        buttonRow.addComponent(settingsMenu);
-        buttonRow.setComponentAlignment(settingsMenu, Alignment.BOTTOM_RIGHT);
-
-        addToButtonBar(buttonRow);
+        super.createButtons(stopButton);
     }
 
     /**
