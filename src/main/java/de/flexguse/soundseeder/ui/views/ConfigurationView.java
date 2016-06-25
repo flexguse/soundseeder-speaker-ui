@@ -24,7 +24,6 @@ import de.flexguse.soundseeder.model.SpeakerConfiguration;
 import de.flexguse.soundseeder.ui.component.ConfigurationForm;
 import de.flexguse.soundseeder.ui.events.SaveSpeakerConfigurationEvent;
 import de.flexguse.soundseeder.ui.events.ShowCurrentPlaybackViewEvent;
-import de.flexguse.soundseeder.ui.events.ShowStoppedViewEvent;
 
 /**
  * @author Christoph Guse, info@flexguse.de
