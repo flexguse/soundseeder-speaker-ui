@@ -36,7 +36,7 @@ public class CoverImage extends Image implements InitializingBean, DisposableBea
 	/**
 	 * default play icon
 	 */
-	private ThemeResource speakerIcon = new ThemeResource("img/speaker_playing.svg");
+	private static final ThemeResource speakerIcon = new ThemeResource("img/speaker_playing.svg");
 
 	/**
 	 * Every time the song changed the album cover is loaded.
@@ -49,7 +49,10 @@ public class CoverImage extends Image implements InitializingBean, DisposableBea
 		Resource cover = new ExternalResource(String.format("http://%s:5353/0", event.getPlayerIp()));
 		if (cover == null || StringUtils.isEmpty(cover.getMIMEType())) {
 			if(getUI() != null){
-				getUI().access(() -> setSource(speakerIcon));
+				getUI().access(() -> {
+				    setSource(speakerIcon);
+				    setAlternateText("speaker playing");
+				});
 			}
 			
 

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+	
+	<!--  base.xml includes both file and console appenders -->
+	<include resource="org/springframework/boot/logging/logback/base.xml"/>
+	<!--
+	<include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <include resource="org/springframework/boot/logging/logback/file-appender.xml" /> 
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+    -->
+	<property name="FILE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${PID:- } --- [%15.15t{14}] %-40.40logger{39} : %m%n"/>
+	<property name="CONSOLE_LOG_PATTERN" value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
+	
+	<!-- no need to define the appenders CONSOLE and FILE separately because both will be included via "base.xml"
+		 (see: https://github.com/spring-projects/spring-boot/tree/master/spring-boot/src/main/resources/org/springframework/boot/logging/logback)
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <Target>System.out</Target>
+        <encoder>
+         	<charset>UTF-8</charset>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_FILE}</file>
+		<encoder>
+			<pattern>${FILE_LOG_PATTERN}</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}.log</fileNamePattern>
+		</rollingPolicy>
+	</appender>
+	-->
+	<logger name="de.flexguse.soundseeder" level="DEBUG">
+    	<appender-ref ref="FILE" />
+    	<appender-ref ref="CONSOLE" />
+	</logger>
+
+	<root level="WARN">
+		<appender-ref ref="FILE" />
+    	<appender-ref ref="CONSOLE" />
+	</root>
+	
+	<!--  TODO: configure to use profiles -->
+	<springProfile name="staging">
+    	<!-- configuration to be enabled when the "staging" profile is active -->
+	</springProfile>
+	
+	<springProfile name="dev, staging">
+	    <!-- configuration to be enabled when the "dev" or "staging" profiles are active -->
+	</springProfile>
+	
+	<springProfile name="!production">
+	    <!-- configuration to be enabled when the "production" profile is not active -->
+	</springProfile>
+
+</configuration>

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
 	<groupId>de.flexguse.soundseeder</groupId>
 	<artifactId>soundseeder-speaker-ui</artifactId>
 	<version>0.0.3-SNAPSHOT</version>
@@ -14,101 +12,64 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.3.5.RELEASE</version>
-		<relativePath /> <!-- lookup parent from repository -->
+		<version>1.4.0.BUILD-SNAPSHOT</version>
+		<relativePath />
 	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<vaadin.version>7.6.6</vaadin.version>
 		<java.version>1.8</java.version>
+		<productionMode>false</productionMode>
 	</properties>
 
-	<dependencies>
-		<dependency>
-			<groupId>com.vaadin</groupId>
-			<artifactId>vaadin-spring-boot-starter</artifactId>
-			<version>1.0.0</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-starter-logging</artifactId>
-				</exclusion>
-				<exclusion>
-					<artifactId>spring-boot-starter-tomcat</artifactId>
-					<groupId>org.springframework.boot</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-undertow</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-log4j2</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>com.vaadin</groupId>
-			<artifactId>vaadin-push</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.vaadin.spring.addons</groupId>
-			<artifactId>vaadin-spring-addon-i18n</artifactId>
-			<version>0.0.7.RELEASE</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.vaadin.spring.addons</groupId>
-			<artifactId>vaadin-spring-addon-eventbus</artifactId>
-			<version>0.0.7.RELEASE</version>
-		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>1.16.6</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.3.2</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-web</artifactId>
-			<version>2.5</version>
-		</dependency>
-
-		<!-- soundseeder jar -->
-		<dependency>
-			<groupId>com.soundseeder</groupId>
-			<artifactId>soundseeder-speaker</artifactId>
-			<version>0.5.0</version>
-		</dependency>
-
-
-		<!-- testing dependencies -->
-		<dependency>
-			<groupId>de.flexguse.util.junit</groupId>
-			<artifactId>validation-violation-checker</artifactId>
-			<version>0.2</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-	</dependencies>
+	<repositories>
+		<!-- vaadin repos -->
+		<repository>
+			<id>vaadin-addons</id>
+			<url>http://maven.vaadin.com/vaadin-addons</url>
+		</repository>
+		<repository>
+            <id>vaadin-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+		<!-- spring repositories -->
+    	<!-- not needed if a .RELEASE version of spring-boot is used -->
+	    <repository>
+	        <id>spring-snapshots</id>
+	        <name>Spring Snapshots</name>
+	        <url>https://repo.spring.io/libs-snapshot</url>
+	        <snapshots>
+	            <enabled>true</enabled>
+	        </snapshots>
+	    </repository> 
+	</repositories>
+	
+	<pluginRepositories>
+		<!-- vaadin repos -->
+        <pluginRepository>
+            <id>vaadin-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+		<!-- spring repositories -->
+    	<!-- not needed if a .RELEASE version of spring-boot is used -->
+        <pluginRepository>
+            <id>spring-snapshots</id>
+            <url>http://repo.spring.io/snapshot</url>
+        </pluginRepository> 
+    </pluginRepositories>
 
 	<dependencyManagement>
 		<dependencies>
@@ -121,12 +82,155 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+	
+	<dependencies>
+		<dependency>
+        	<groupId>org.springframework.boot</groupId>
+        	<artifactId>spring-boot-starter-web</artifactId>
+        	<exclusions>
+        		<!--  The Spring Boot starters (spring-boot-starter-web in particular) use Tomcat as an embedded container 
+					  by default. tomcat will be excluded as dependency beacuse undertow is used --> 
+		        <exclusion>
+		            <groupId>org.springframework.boot</groupId>
+		            <artifactId>spring-boot-starter-tomcat</artifactId>
+		        </exclusion>
+		    </exclusions>
+    	</dependency>
+    	<!--  use undertow instead of tomact -->
+    	<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-undertow</artifactId>
+		</dependency>
+<!-- The dependency spring-boot-starter includes the dependencies for logging spring-boot-starter-logging, 
+	 so we need not add the logging dependency again. The spring-boot-starter-logging includes SLF4J and logback 
+	 dependencies with appropriate SLF4J wrappers for other logging libraries.
+	 Use this dependecy only if you want to use a custom logger (such as log4j, log4j2, etc.)
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-log4j2</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-web</artifactId>
+			<version>2.5</version>
+		</dependency>
+-->
+		<!-- required for the validation used in the Configuration annoted class -->
+		<dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+        </dependency>
+        
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-spring-boot-starter</artifactId>
+			<version>1.0.0</version>
+			<exclusions>
+				<!-- in case you want to use a different logging framework (log4j2 for example) 
+				 disable spring boots own logging here and implement your own. Use own configuration file, e.g. log4j2.xml. 
+			     In order to use spring boot logging (logback) comment out this exclusion:
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+				-->
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-tomcat</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-push</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-server</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-client</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-client-compiled</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>com.vaadin</groupId>
+		    <artifactId>vaadin-themes</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.vaadin.spring.addons</groupId>
+			<artifactId>vaadin-spring-addon-i18n</artifactId>
+			<version>0.0.7.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.vaadin.spring.addons</groupId>
+			<artifactId>vaadin-spring-addon-eventbus</artifactId>
+			<version>0.0.7.RELEASE</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.3.2</version>
+		</dependency>
+		
+		<!-- soundseeder jar -->
+		<dependency>
+			<groupId>com.soundseeder</groupId>
+			<artifactId>soundseeder-speaker</artifactId>
+			<version>0.5.1</version>
+		</dependency>
+
+		<!-- testing dependencies -->
+		<dependency>
+			<groupId>de.flexguse.util.junit</groupId>
+			<artifactId>validation-violation-checker</artifactId>
+			<version>0.2</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<!-- added the following exclusion due to java.lang.ClassCastException: 
+				 org.apache.tomcat.websocket.server.WsServerContainer cannot be cast to 
+				 io.undertow.websockets.jsr.ServerWebSocketContainer
+			 -->
+			<exclusions>
+	            <exclusion>
+	                <groupId>org.apache.tomcat.embed</groupId>
+	                <artifactId>tomcat-embed-websocket</artifactId>
+	            </exclusion>
+        	</exclusions>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
+				<!-- maven-plugin used to package the project as an executable jar -->
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<!-- used for hot swapping; now deactivated due to an issue with shutting down the spring boot server (widfly) 
+				<dependencies>
+			        <dependency>
+			            <groupId>org.springframework</groupId>
+			            <artifactId>springloaded</artifactId>
+			            <version>1.2.5.RELEASE</version>
+			        </dependency>
+			    </dependencies>
+			    -->
 				<executions>
 					<execution>
 						<goals>
@@ -143,7 +247,6 @@
 					</excludes>
 					<executable>true</executable>
 				</configuration>
-
 			</plugin>
 
 			<!-- this plugin is needed to prevent build fails if javadoc is not complete -->
@@ -159,6 +262,60 @@
 						<configuration>
 							<additionalparam>-Xdoclint:none</additionalparam>
 						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+<!-- not quite sure, if this is required for 'compile widgetset' launched from the eclipse vaadin plugin 
+			<plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-compiler-plugin</artifactId>
+			  <version>3.5.1</version>
+			  <configuration>
+			    <compilerArgs>
+			      <arg>-verbose</arg>
+			      <arg>-Xlint:all,-options,-path</arg>
+			    </compilerArgs>
+			  </configuration>
+			</plugin>
+			<plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-clean-plugin</artifactId>
+			  <version>3.0.0</version>
+			</plugin>
+-->	   
+<!--  added in order to be able to launch 'compile theme' directly via the eclipse vaadin plugin.
+However, this fails, error: "theme is not found" -->
+			<plugin>
+				<groupId>com.vaadin</groupId>
+				<artifactId>vaadin-maven-plugin</artifactId>
+				<version>${vaadin.version}</version>
+				<configuration>
+					<extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs>
+					<webappDirectory>${basedir}/target/classes/VAADIN/widgetsets</webappDirectory>
+					<noServer>true</noServer>
+					 <!-- Remove draftCompile when project is ready -->
+					<draftCompile>false</draftCompile>
+					<!-- Compile report is not typically needed either, saves hunreds of MB disk -->
+					<compileReport>false</compileReport>
+					<style>OBF</style>
+					<strict>true</strict>
+					<runTarget>http://localhost:8080/</runTarget>
+					<vaadin.theme>soundseeder</vaadin.theme> 
+				</configuration>
+				<executions>
+					<execution>
+						<configuration>
+							<vaadin.theme>soundseeder</vaadin.theme> 
+						</configuration>
+						<goals>
+							<goal>clean</goal>
+							<goal>resources</goal>
+							<goal>update-theme</goal>
+							<goal>update-widgetset</goal>
+							<goal>compile-theme</goal>
+							<goal>compile</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>
@@ -390,14 +547,60 @@
 			<!-- END OF GIT COMMIT ID PLUGIN CONFIGURATION -->
 
 		</plugins>
+		
+		<pluginManagement>
+            <plugins>
+                <!--This plugin's configuration is used to store Eclipse 
+                m2e settings only. It has no influence on the Maven build itself. -->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>com.vaadin</groupId>
+                                        <artifactId>
+                                            vaadin-maven-plugin
+                                        </artifactId>
+                                        <versionRange>
+                                            [7.5.5,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>resources</goal>
+                                            <goal>update-widgetset</goal>
+                                            <goal>compile</goal>
+                                            <goal>update-theme</goal>
+                                            <goal>compile-theme</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore></ignore>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-eclipse-plugin</artifactId>
+                    <configuration>
+                        <wtpversion>2.0</wtpversion>
+                        <additionalProjectnatures>
+                            <projectnature>com.vaadin.integration.eclipse.widgetsetNature</projectnature>
+                        </additionalProjectnatures>
+                        <additionalBuildcommands>
+                            <buildcommand>com.vaadin.integration.eclipse.widgetsetBuilder</buildcommand>
+                            <buildcommand>com.vaadin.integration.eclipse.addonStylesBuilder</buildcommand>
+                        </additionalBuildcommands>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+		
+		
 	</build>
-
-	<repositories>
-		<repository>
-			<id>vaadin-addons</id>
-			<url>http://maven.vaadin.com/vaadin-addons</url>
-		</repository>
-
-	</repositories>
 
 </project>

@@ -15,20 +15,24 @@ import com.soundseeder.speaker.Speaker;
 import com.soundseeder.speaker.SpeakerServiceAdapter;
 import com.soundseeder.speaker.interfaces.NotificationListener;
 import com.soundseeder.speaker.model.ChannelConf;
+import com.soundseeder.speaker.model.PlaybackStatus;
 import com.soundseeder.speaker.model.Song;
 
 import de.flexguse.soundseeder.model.SpeakerConfiguration;
 import de.flexguse.soundseeder.model.converter.SpeakerChannelToChannelConfConverter;
 import de.flexguse.soundseeder.service.NetworkInterfaceService;
 import de.flexguse.soundseeder.service.SoundSeederService;
+import de.flexguse.soundseeder.ui.SoundSeederApplication;
 import de.flexguse.soundseeder.ui.events.SongChangeEvent;
 import de.flexguse.soundseeder.ui.events.VolumeChangedEvent;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Christoph Guse, info@flexguse.de
  *
  */
+@Slf4j
 public class SoundSeederServiceImpl implements SoundSeederService, DisposableBean, NotificationListener {
 
 	@Autowired
@@ -38,8 +42,8 @@ public class SoundSeederServiceImpl implements SoundSeederService, DisposableBea
 	@Autowired
 	private EventBus.ApplicationEventBus applicationEventBus;
 	
-	@Autowired
-	private SpeakerConfiguration speakerConfiguration;
+//	@Autowired
+//	private SpeakerConfiguration speakerConfiguration;
 
 	private SpeakerServiceAdapter speakerServiceAdapter;
 
@@ -79,6 +83,7 @@ public class SoundSeederServiceImpl implements SoundSeederService, DisposableBea
 			speakerServiceAdapter.setDeviceName(configuration.getSpeakerName());
 			speakerServiceAdapter.setMusicStreamVolume(configuration.getVolume().intValue());
 			speakerServiceAdapter.setSpeakerChannelConf(converter.convert(configuration.getSpeakerChannel()), true);
+			speakerServiceAdapter.setActiveMixerByIndex(configuration.getMixerIndex().intValue());
 		}
 
 		if (speakerServiceAdapter.isPlaying()) {
@@ -195,7 +200,7 @@ public class SoundSeederServiceImpl implements SoundSeederService, DisposableBea
 
 	@Override
 	public void onChannelConfChange(ChannelConf channelConfiguration) {
-		
+	        log.debug("onChannelConfChange called: channgelConfig: " + channelConfiguration);
 		// TODO: update speaker configuration, save configuration
 		String test = "";
 		
@@ -204,7 +209,7 @@ public class SoundSeederServiceImpl implements SoundSeederService, DisposableBea
 	@Override
 	public void onPlayerDataChanged() {
 		// TODO Auto-generated method stub
-
+	    log.debug("onPlayerDataChanged called");
 	}
 
 	@Override
@@ -212,7 +217,7 @@ public class SoundSeederServiceImpl implements SoundSeederService, DisposableBea
 
 		lastSong = SongChangeEvent.builder().albumName(song.getAlbumName()).artistName(song.getArtistName())
 				.songDuration(song.getDurationFormatted()).songName(song.getSongName())
-				.playerIp(speakerServiceAdapter.getConnectedPlayer().getIp()).build();
+				.playerIp(speakerServiceAdapter.getConnectedPlayer().getIp()).eventSource(this).build();
 
 		applicationEventBus.publish(this, lastSong);
 
@@ -228,6 +233,12 @@ public class SoundSeederServiceImpl implements SoundSeederService, DisposableBea
 
 		applicationEventBus.publish(this, VolumeChangedEvent.builder().changedVolume(volume).eventSource(this).build());
 
+	}
+
+	@Override
+	public void onPlaybackStatusChange(PlaybackStatus arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
