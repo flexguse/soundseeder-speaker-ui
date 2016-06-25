@@ -348,6 +348,7 @@ However, this fails, error: "theme is not found" -->
 			<plugin>
 				<groupId>pl.project13.maven</groupId>
 				<artifactId>git-commit-id-plugin</artifactId>
+				<version>2.2.1</version>
 				<executions>
 					<execution>
 						<goals>
@@ -406,7 +407,7 @@ However, this fails, error: "theme is not found" -->
 						the plugin should run inside a <packaging>pom</packaging> project. Most projects 
 						won't need to override this property. For an use-case for this kind of behaviour 
 						see: https://github.com/ktoso/maven-git-commit-id-plugin/issues/21 -->
-					<skipPoms>false</skipPoms>
+					<skipPoms>true</skipPoms>
 
 					<!-- @since 2.1.4 -->
 					<!-- Tell maven-git-commit-id to inject the git properties into all 
